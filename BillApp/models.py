@@ -20,6 +20,8 @@ class Items(models.Model):
     hsn = models.IntegerField()
     unit = models.CharField(max_length=100)
     tax = models.CharField(max_length=50)
+    gst = models.CharField(max_length = 50, null = True)
+    igst = models.CharField(max_length = 50, null = True)
     sale_price = models.FloatField(null=True, blank= True)
     purchase_price = models.FloatField(null=True, blank= True)
     stock = models.IntegerField()

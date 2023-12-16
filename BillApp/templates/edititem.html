@@ -84,6 +84,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-12 col-lg-12 col-xl-12">
+                    <span class="d-flex justify-content-end p-2" style="cursor: pointer;" onclick="window.location.href=`{% url 'showItemData' item.id %}`"><i class="fa-solid fa-xmark text-dark fs-5"></i></span>
                     <div class="card" style="background-color: #eae9c4;">
                         <div class="row no-gutters">
                             <div class="col-md-2"></div>
@@ -140,22 +141,45 @@
                             </div>
                         </div>
                         <div class="row mt-3">
-                            <label for="item_name" class="mb-2">Tax Reference</label>
-                            <div class="col-md-6 col-lg-6">
+                            <div class="col-md-4 col-lg-4">
+                                <label for="item_name" class="mb-2">Tax Reference</label>
                                 <div class="form-group">
                                     <div class="d-block">
                                         <label for="taxable">Taxable</label>
                                         <label class="switch">
-                                            <input type="checkbox" name="tax_ref" id="tax_ref">
+                                            <input type="checkbox" name="tax_ref" value="Non-taxable" id="tax_ref">
                                             <span class="slider round"></span>
                                         </label>
-                                        <label for="exempt">Exempt Nill</label>
+                                        <label for="non-taxable">Non Taxable</label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 col-lg-6">
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6 col-lg-6 taxInputs">
                                 <div class="form-group">
-                                    <input type="text" name="tax" id="item_tax" readonly class="form-control" value="VAT 5%"/>
+                                    <label for="taxGST">Intra-State TAX</label>
+                                    <select name="intraStateTax" class="form-control" id="taxGST">
+                                        <option value="GST0[0%]">GST0[0%]</option>
+                                        <option value="GST3[3%]">GST3[3%]</option>
+                                        <option value="GST5[5%]">GST5[5%]</option>
+                                        <option value="GST12[12%]">GST12[12%]</option>
+                                        <option value="GST18[18%]">GST18[18%]</option>
+                                        <option value="GST28[28%]">GST28[28%]</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6 taxInputs">
+                                <div class="form-group">
+                                    <label for="taxIGST">Inter-State TAX</label>
+                                    <select name="interStateTax" class="form-control" id="taxIGST">
+                                        <option value="IGST0[0%]">IGST0[0%]</option>
+                                        <option value="IGST3[3%]">IGST3[3%]</option>
+                                        <option value="IGST5[5%]">IGST5[5%]</option>
+                                        <option value="IGST12[12%]">IGST12[12%]</option>
+                                        <option value="IGST18[18%]">IGST18[18%]</option>
+                                        <option value="IGST28[28%]">IGST28[28%]</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -230,17 +254,15 @@
 
 <script>
     window.onload = function () {
-        const $unitSelect = document.querySelector("#item_units");
-        $unitSelect.value = `{{item.unit}}`;
-
-        if(`{{item.tax}}`== 'VAT 5%'){
-            $('#tax_ref').prop('checked',false)
-        }
-        else{
+        document.querySelector("#item_units").value = `{{item.unit}}`;
+        if(`{{item.tax}}` == 'Taxable'){
+            document.querySelector("#taxGST").value = `{{item.gst}}`;
+            document.querySelector("#taxIGST").value = `{{item.igst}}`;  
+        }else{
             $('#tax_ref').prop('checked',true)
-            $('#item_tax').val('VAT 0%');
+            $('.taxInputs').hide()
         }
-
+        
     };
     $(document).ready(()=>{
         var nav_links = $(".nav-item.nav-link");
@@ -254,7 +276,7 @@
         }
 
         $('#tax_ref').change(function () {
-            $(this).is(":checked") ? $('#item_tax').val('VAT 0%') : $('#item_tax').val('VAT 5%');
+            $(this).is(":checked") ? $('.taxInputs').hide() : $('.taxInputs').show();
         });
     })
 

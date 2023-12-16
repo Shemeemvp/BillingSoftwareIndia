@@ -6,12 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <!-- <link href="{% static 'assets/css/pace.min.css' %}" rel="stylesheet"/>
     <script src="{% static 'assets/js/pace.min.js' %}"></script> -->
-    <script
-            src="https://kit.fontawesome.com/64d58efce2.js"
-            crossorigin="anonymous">
-    </script>
+    <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}">
-    <title>BillingSoftware | Sign In</title>
+    <title>BillingSoftwareIndia | Sign In</title>
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.js' %}"></script>
@@ -132,6 +129,10 @@
             font-weight: 600;
             font-size: 1rem;
             color: #333;
+        }
+
+        #state:focus{
+            box-shadow: none;
         }
 
         .input-field input::placeholder , .input-field textarea::placeholder{
@@ -416,7 +417,48 @@
                             </div>
                             <div class="input-field">
                                 <i class="fa fa-map-signs"></i>
-                                <input type="text" placeholder="State" name="state" id="state" required/>
+                                <!-- <input type="text" placeholder="State" name="state" id="state" required/> -->
+                                <select class="form-control" id="state" name="state" style="border: none;" required>
+                                    <option value="" selected>Choose State..</option>
+                                    <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islads</option>
+                                    <option value="Andhra Predhesh">Andhra Predhesh</option>
+                                    <option value="Arunachal Predesh">Arunachal Predesh</option>
+                                    <option value="Assam">Assam</option>
+                                    <option value="Bihar">Bihar</option>
+                                    <option value="Chandigarh">Chandigarh</option>
+                                    <option value="Chhattisgarh">Chhattisgarh</option>
+                                    <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                    <option value="Daman and Diu">Daman and Diu</option>
+                                    <option value="Delhi">Delhi</option>
+                                    <option value="Goa">Goa</option>
+                                    <option value="Gujarat">Gujarat</option>
+                                    <option value="Haryana">Haryana</option>
+                                    <option value="Himachal Predesh">Himachal Predesh</option>
+                                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                    <option value="Jharkhand">Jharkhand</option>
+                                    <option value="Karnataka">Karnataka</option>
+                                    <option value="Kerala">Kerala</option>
+                                    <option value="Ladakh">Ladakh</option>
+                                    <option value="Lakshadweep">Lakshadweep</option>
+                                    <option value="Madhya Predesh">Madhya Predesh</option>
+                                    <option value="Maharashtra">Maharashtra</option>
+                                    <option value="Manipur">Manipur</option>
+                                    <option value="Meghalaya">Meghalaya</option>
+                                    <option value="Mizoram">Mizoram</option>
+                                    <option value="Nagaland">Nagaland</option>
+                                    <option value="Odisha">Odisha</option>
+                                    <option value="Puducherry">Puducherry</option>
+                                    <option value="Punjab">Punjab</option>
+                                    <option value="Rajasthan">Rajasthan</option>
+                                    <option value="Sikkim">Sikkim</option>
+                                    <option value="Tamil Nadu">Tamil Nadu</option>
+                                    <option value="Telangana">Telangana</option>
+                                    <option value="Tripura">Tripura</option>
+                                    <option value="Uttar Predesh">Uttar Predesh</option>
+                                    <option value="Uttarakhand">Uttarakhand</option>
+                                    <option value="West Bengal">West Bengal</option>
+                                    <option value="Other Territory">Other Territory</option>
+                                </select>
                             </div>
                             <div class="input-field">
                                 <i class="fas fa-lock"></i>

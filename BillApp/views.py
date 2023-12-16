@@ -186,10 +186,10 @@ def registerUser(request):
                         country = cntry,
                     )
                     cmpnyData.save()
-                    # messages.info(request, 'Registration Successful..')
+                    messages.success(request, 'Registration Successful..')
                     return redirect(login)
                 else:
-                    # messages.warning(request, "Passwords doesn't match..Please try again.")
+                    messages.warning(request, "Passwords doesn't match..Please try again.")
                     # return HttpResponse('please! verify your passwords')
                     return redirect(login)
         else:
@@ -244,10 +244,10 @@ def updateUserProfile(request):
                 cmp.country = request.POST['country']
                 cmp.save()
             
-                if User.objects.filter(username = request.POST['username']).exists():
+                if user.username != request.POST['username'] and User.objects.filter(username = request.POST['username']).exists():
                     messages.error(request, 'Username already exists, Try another.!')
                     return redirect(showProfile)
-                if User.objects.filter(email = request.POST['email']).exists():
+                if user.email != request.POST['email'] and User.objects.filter(email = request.POST['email']).exists():
                     messages.error(request, 'Email already exists, Try another.!')
                     return redirect(showProfile)
                     
@@ -393,7 +393,9 @@ def createNewItem(request):
                     name=request.POST["name"],
                     hsn=request.POST["hsn"],
                     unit=request.POST["item_unit"],
-                    tax=request.POST["tax"],
+                    tax = 'Non-taxable' if 'tax_ref' in request.POST else 'Taxable',
+                    gst = None if 'tax_ref' in request.POST else request.POST['intraStateTax'],
+                    igst = None if 'tax_ref' in request.POST else request.POST['interStateTax'],
                     sale_price=request.POST["sale_price"],
                     purchase_price=request.POST["purchase_price"],
                     stock=request.POST["stock"],
@@ -470,14 +472,16 @@ def editItemData(request,id):
                 item.name = request.POST['name']
                 item.hsn = request.POST['hsn']
                 item.unit = request.POST['item_unit']
-                item.tax = request.POST['tax']
+                item.tax = 'Non-taxable' if 'tax_ref' in request.POST else 'Taxable'
+                item.gst = None if 'tax_ref' in request.POST else request.POST['intraStateTax']
+                item.igst = None if 'tax_ref' in request.POST else request.POST['interStateTax']
                 item.sale_price = request.POST['sale_price']
+                item.purchase_price = request.POST['purchase_price']
+                
                 if chQty > crQty:
                     item.stock += diff
                 elif chQty < crQty:
                     item.stock -= diff
-                # item.stock = request.POST['stock']
-                item.purchase_price = request.POST['purchase_price']
 
                 item.save()
 
@@ -581,6 +585,13 @@ def deleteTransaction(request, id):
         cmp = Company.objects.get(user=request.user.id)
         try:
             trns = Item_transactions.objects.get(cid=cmp, id=id)
+            item = Items.objects.get(id = trns.item.id)
+            if trns.type == "Add Stock":
+                item.stock -= trns.quantity
+            elif trns.type == "Reduce Stock":
+                item.stock += trns.quantity
+            
+            item.save()
             trns.delete()
             return redirect(showItemData, trns.item.id)
         except Exception as e:
