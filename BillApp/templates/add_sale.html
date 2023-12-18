@@ -358,13 +358,8 @@
                 document.getElementById('hsn'+n).value = response.hsn;
                 document.getElementById('price'+n).value = response.sale_rate;
                 // document.getElementById('tax'+n).value = response.tax;
-                if(!response.tax){
-                    document.getElementById('taxgst'+n).value = 0;
-                    document.getElementById('taxigst'+n).value = 0;
-                }else if(response.tax){
-                    document.getElementById('taxgst'+n).value = response.gst;
-                    document.getElementById('taxigst'+n).value = response.igst;
-                }
+                document.getElementById('taxgst'+n).value = response.gst;
+                document.getElementById('taxigst'+n).value = response.igst;
                 document.getElementById('sitem'+n).value = response.id;
                 refreshTax();
                 calc();

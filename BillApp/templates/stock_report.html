@@ -127,14 +127,14 @@
                             <div class="col-md-6 d-flex justify-content-end">
                                 <button class="btn action_btns ms-2" onclick="printSection('print_stock_reports')"><i class="fas fa-print me-2"></i>PRINT</button>
                                 <button class="btn action_btns ms-2" onclick="ExportToExcel('xlsx')"><i class="fas fa-print me-2"></i>EXCEL</button>
-                                <div class="share-dropdown">
+                                <button class="btn action_btns ms-2" data-bs-toggle="modal" data-bs-target="#shareReportEmail"><i class="fas fa-mail-bulk me-1"></i>MAIL</button>
+                                <!-- <div class="share-dropdown">
                                     <button class="btn action_btns ms-2"><i class="fas fa-share-nodes me-1"></i>SHARE</button>
                                     <ul class="share-dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li>{% post_to_whatsapp object_or_url "WhatsApp" %}</li>
-                                        <!-- <li>{% send_email object.title "New: {{object.title}}. Check it out!" object_or_url "Email" %}</li> -->
                                         <li><a href="#shareReportEmail" data-bs-toggle="modal">Email</a></li>
                                     </ul>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                         <div class="stock_reports_table_section table-responsive">
@@ -164,6 +164,15 @@
                         {% if balance %}
                         <div class="balance_stock_section">
                             <h5>Stock Remaining: <span class="fs-2 text-success">{{balance}}</span></h5>
+                        </div>
+                        {% elif balance == 0 %}
+                        <div class="balance_stock_section">
+                            <h5>Stock Remaining: <span class="fs-2 text-danger">0</span></h5>
+                        </div>
+                        {% endif %}
+                        {% if count %}
+                        <div class="stock_count_section">
+                            <h5>Stock Count: <span class="fs-2 text-success">{{count}}</span></h5>
                         </div>
                         {% endif %}
                     </div>
@@ -200,6 +209,7 @@
                 {% endfor %}
             </tbody>
     </table>
+    <h5>Available Stock: <span class="fs-2 text-success">{{count}}</span></h5>
 </div>
 
 
@@ -246,6 +256,20 @@
             }
         }
     });
+
+    $(document).ready(()=>{
+        var id = `{{id}}`;
+        if(id != "" && id != "0"){
+            document.querySelector('#item_dropdown').value = id;
+        }
+    });
+
+    // window.onload = function(){
+    //     alert(`{{id}}`)
+    //     if(`{{id}}` != null){
+    //         document.querySelector('#item_dropdown').value = `{{id}}`;
+    //     }
+    // }
 
     $(document).ready(function(){
         $('#share_with_email').on('click',function(){

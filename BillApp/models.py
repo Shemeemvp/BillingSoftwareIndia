@@ -56,7 +56,6 @@ class Purchases(models.Model):
     tax = models.FloatField(null=True, blank= True)
     adjustment = models.FloatField(null=True, blank= True)
     total_amount = models.FloatField(null=True, blank= True)
-    # deleted_bill_no = models.ManyToManyField('self', blank=True, symmetrical=False, related_name='deleted_bills')
 
 class DeletedPurchases(models.Model):
     cid = models.ForeignKey(Company, on_delete=models.CASCADE)

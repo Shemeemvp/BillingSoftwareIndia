@@ -32,6 +32,8 @@ urlpatterns = [
     path('edit_purchase_bill/<int:id>',views.editPurchaseBill, name='editPurchaseBill'),
     path('update_purchase_bill/<int:id>',views.updatePurchaseBill, name='updatePurchaseBill'),
     path('delete_purchase_bill/<int:id>',views.deletePurchaseBill, name='deletePurchaseBill'),
+    path('purchase_bill_pdf/<int:id>',views.purchaseBillPdf, name='purchaseBillPdf'),
+    path('share_purchase_bill_to_email/<int:id>',views.sharePurchaseBillToEmail, name= 'sharePurchaseBillToEmail'),
     
 
 
