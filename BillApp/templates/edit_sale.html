@@ -147,6 +147,16 @@
                             </div>
                         </div>
 
+                        <div class="row mt-3">
+                            <div class="col-md-4">
+                                <label for="state_of_supply">State of Supply</label>
+                                <select name="stateOfSupply" id="state_of_supply" class="form-control">
+                                    <option value="State" selected>State</option>
+                                    <option value="Other State">Other State</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="row clearfix mt-3">
                             <div class="col-md-12 table-responsive-md">
                               <table class="table table-bordered table-hover mt-3" id="items_table" style="background-color: #eae9c4; border-color: white;">
@@ -185,7 +195,11 @@
                                         </td>
                                         <td><input type="number" name='qty[]' value="{{p.quantity}}" placeholder='Quantity' id="qty{{forloop.counter}}" value="" class="form-control qty" min="1" required/></td>
                                         <td><input type="number" name='price[]' value="{{p.rate}}" id="price{{forloop.counter}}" placeholder='Unit Price' class="form-control price" step="0.00" min="0" /></td>
-                                        <td><input type="text" name="tax[]" value="{{p.tax}}" class="form-control tax" placeholder="VAT %" id="tax1"></td>
+                                        <!-- <td><input type="text" name="tax[]" value="{{p.tax}}" class="form-control tax" placeholder="VAT %" id="tax1"></td> -->
+                                        <td>
+                                            <input type="text" name="taxgst[]" class="form-control tax tax-gst" placeholder="0 %" value="{{p.item.gst}}" id="taxgst1" style="display: block;" readonly>
+                                            <input type="text" name="taxigst[]" class="form-control tax tax-igst" placeholder="0 %" value="{{p.item.igst}}" id="taxigst1" style="display: none;" readonly>
+                                        </td>
                                         <td><input type="number" name='total[]' value="{{p.total}}" id="total{{forloop.counter}}" class="form-control total" value="0" step="any" readonly /></td>
                                         <td style="display: none;"><input type="number" step="any" name='taxamount{{forloop.counter}}' id="taxamount1" class="form-control taxamount"/></td></td>
                                         <td>
@@ -219,9 +233,36 @@
                                         </div>
                                     </div>
 
-                                    <div class="tax align-items-center amount_summary">
+                                    <div class="align-items-center amount_summary" id="cgst_val">
+                                        <div class="cgst_head_label">
+                                            <label>CGST</label>
+                                        </div>
+                                        <div class="val">
+                                            <input type="number" placeholder="0.00" value="{{bill.cgst}}" class="form-control" name="cgst_tax" id="cgst_tax" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="align-items-center amount_summary" id="sgst_val">
+                                        <div class="sgst_head_label">
+                                            <label>SGST</label>
+                                        </div>
+                                        <div class="val">
+                                            <input type="number" placeholder="0.00" value="{{bill.sgst}}" class="form-control" name="sgst_tax" id="sgst_tax" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="align-items-center amount_summary" id="igst_val">
+                                        <div class="igst_head_label">
+                                            <label>IGST</label>
+                                        </div>
+                                        <div class="val">
+                                            <input type="number" placeholder="0.00" value="{{bill.igst}}" class="form-control" name="igst_tax" id="igst_tax" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="align-items-center amount_summary">
                                         <div class="amt_head_label">
-                                            <label>TAX</label>
+                                            <label>TAX AMOUNT</label>
                                         </div>
                                         <div class="val">
                                             <input type="number" placeholder="0.00" value="{{bill.tax}}" class="form-control" name="tax" id="tax" readonly>
@@ -288,6 +329,53 @@
             $('#party_details').show();
         }
     })
+
+    $(document).ready(()=>{
+        document.querySelector('#state_of_supply').value = `{{bill.state_of_supply}}`
+    })
+
+    $(function(){
+        if ($('#state_of_supply').val() == 'State'){
+            $("#igst_val").css('display','none');
+            $('.tax').css('display','none');
+            $('.tax-gst').css('display','block');
+        }else{
+            $("#cgst_val").css('display','none');
+            $("#sgst_val").css('display','none');
+            $('.tax').css('display','none');
+            $('.tax-igst').css('display','block');
+        }
+        
+    })
+
+    $(document).ready(function() {
+        $('#state_of_supply').change(function() {
+            if (document.getElementById("state_of_supply").value == 'State') {
+                $("#cgst_val").css('display','grid');
+                $("#sgst_val").css('display','grid');
+                $("#igst_val").css('display','none');
+                refreshTax()
+                calc()
+
+            } else {
+                $("#cgst_val").css('display','none');
+                $("#sgst_val").css('display','none');
+                $("#igst_val").css('display','grid');
+                refreshTax()
+                calc()
+            }
+        });
+    });
+
+    function refreshTax(){
+        if($('#state_of_supply').val() == 'State'){
+            $('.tax').css('display','none');
+            $('.tax-gst').css('display','block');
+        }else{
+            $('.tax').css('display','none');
+            $('.tax-igst').css('display','block');
+        }
+    }
 
     function filterFunction(id){
         var options = $('#'+ $("#"+id).next().attr('id')).children();

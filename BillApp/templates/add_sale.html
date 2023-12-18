@@ -94,6 +94,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-12 col-lg-12 col-xl-12">
+                    <span class="d-flex justify-content-end p-2" style="cursor: pointer;" onclick="window.location.href=`{% url 'goSales' %}`"><i class="fa-solid fa-xmark text-dark fs-5"></i></span>
                     <div class="card" style="background-color: #eae9c4;">
                         <div class="row no-gutters">
                             <div class="col-md-2"></div>
@@ -148,6 +149,16 @@
                             </div>
                         </div>
 
+                        <div class="row mt-3">
+                            <div class="col-md-4">
+                                <label for="state_of_supply">State of Supply</label>
+                                <select name="stateOfSupply" id="state_of_supply" class="form-control">
+                                    <option value="State" selected>State</option>
+                                    <option value="Other State">Other State</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="row clearfix mt-3">
                             <div class="col-md-12 table-responsive-md">
                               <table class="table table-bordered table-hover mt-3" id="items_table" style="background-color: #eae9c4; border-color: white;">
@@ -185,7 +196,10 @@
                                         </td>
                                         <td><input type="number" name='qty[]'placeholder='Quantity' id="qty1" value="" class="form-control qty" min="1" required/></td>
                                         <td><input type="number" name='price[]' id="price1" placeholder='Unit Price' class="form-control price" step="0.00" min="0" /></td>
-                                        <td><input type="text" name="tax[]" class="form-control tax" placeholder="VAT %" id="tax1"></td>
+                                        <td>
+                                            <input type="text" name="taxgst[]" class="form-control tax tax-gst" placeholder="0 %" id="taxgst1" style="display: block;" readonly>
+                                            <input type="text" name="taxigst[]" class="form-control tax tax-igst" placeholder="0 %" id="taxigst1" style="display: none;" readonly>
+                                        </td>
                                         <td><input type="number" name='total[]' id="total1" class="form-control total" value="0" step="any" readonly /></td>
                                         <td style="display: none;"><input type="number" step="any" name='taxamount1' id="taxamount1" class="form-control taxamount"/></td></td>
                                         <td>
@@ -218,9 +232,36 @@
                                         </div>
                                     </div>
 
-                                    <div class="tax align-items-center amount_summary">
+                                    <div class="align-items-center amount_summary" id="cgst_val">
+                                        <div class="cgst_head_label">
+                                            <label>CGST</label>
+                                        </div>
+                                        <div class="val">
+                                            <input type="number" placeholder="0.00" value="0.00" class="form-control" name="cgst_tax" id="cgst_tax" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="align-items-center amount_summary" id="sgst_val">
+                                        <div class="sgst_head_label">
+                                            <label>SGST</label>
+                                        </div>
+                                        <div class="val">
+                                            <input type="number" placeholder="0.00" value="0.00" class="form-control" name="sgst_tax" id="sgst_tax" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="align-items-center amount_summary" id="igst_val">
+                                        <div class="igst_head_label">
+                                            <label>IGST</label>
+                                        </div>
+                                        <div class="val">
+                                            <input type="number" placeholder="0.00" value="0.00" class="form-control" name="igst_tax" id="igst_tax" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="align-items-center amount_summary">
                                         <div class="amt_head_label">
-                                            <label>TAX</label>
+                                            <label>TAX AMOUNT</label>
                                         </div>
                                         <div class="val">
                                             <input type="number" placeholder="0.00" value="0.00" class="form-control" name="tax" id="tax" readonly>
@@ -316,12 +357,54 @@
             if (response.status){
                 document.getElementById('hsn'+n).value = response.hsn;
                 document.getElementById('price'+n).value = response.sale_rate;
-                document.getElementById('tax'+n).value = response.tax;
+                // document.getElementById('tax'+n).value = response.tax;
+                if(!response.tax){
+                    document.getElementById('taxgst'+n).value = 0;
+                    document.getElementById('taxigst'+n).value = 0;
+                }else if(response.tax){
+                    document.getElementById('taxgst'+n).value = response.gst;
+                    document.getElementById('taxigst'+n).value = response.igst;
+                }
                 document.getElementById('sitem'+n).value = response.id;
+                refreshTax();
+                calc();
             }
         },
         });
 
+    }
+
+    $(function(){
+        $("#igst_val").css('display','none');
+    })
+
+    $(document).ready(function() {
+        $('#state_of_supply').change(function() {
+            if (document.getElementById("state_of_supply").value == 'State') {
+                $("#cgst_val").css('display','grid');
+                $("#sgst_val").css('display','grid');
+                $("#igst_val").css('display','none');
+                refreshTax()
+                calc()
+
+            } else {
+                $("#cgst_val").css('display','none');
+                $("#sgst_val").css('display','none');
+                $("#igst_val").css('display','grid');
+                refreshTax()
+                calc()
+            }
+        });
+    });
+
+    function refreshTax(){
+        if($('#state_of_supply').val() == 'State'){
+            $('.tax').css('display','none');
+            $('.tax-gst').css('display','block');
+        }else{
+            $('.tax').css('display','none');
+            $('.tax-igst').css('display','block');
+        }
     }
 
     $('#check_party').change(()=>{
@@ -393,7 +476,10 @@
                     </td>
                     <td><input type="number" name='qty[]'placeholder='Quantity' id="qty${roinc}" value="" class="form-control qty" min="1" required/></td>
                     <td><input type="number" name='price[]' id="price${roinc}" placeholder='Unit Price' class="form-control price" step="0.00" min="0" /></td>
-                    <td><input type="text" name="tax[]" class="form-control tax" placeholder="VAT %" id="tax${roinc}"></td>
+                    <td>
+                        <input type="text" name="taxgst[]" class="form-control tax tax-gst" placeholder="0 %" id="taxgst${roinc}" style="display: block;" readonly>
+                        <input type="text" name="taxigst[]" class="form-control tax tax-igst" placeholder="0 %" id="taxigst${roinc}" style="display: none;" readonly>
+                    </td>
                     <td><input type="number" name='total[]' id="total${roinc}" class="form-control total" value="0" step="any" readonly /></td>
                     <td style="display: none;"><input type="number" step="any" name='taxamount1' id="taxamount${roinc}" class="form-control taxamount"/></td></td>
                     <td>
@@ -409,33 +495,29 @@
         calc();
     });
 
-    // $('.qty').on('keyup change', function () {
-    //     calc();
-    // });
-
-    $(document).on('change', '.item',function(){ 
+    // $(document).on('change', '.item',function(){ 
                 
-        var n = $(this).attr("id").slice(4);
-        console.log(n)
-        $.ajax({
-        url: "{% url 'getItemData' %}",
-        type : 'GET',
-        data:{
-            id : $(this).val(),
-            csrfmiddlewaretoken: '{{ csrf_token }}'
-            },
+    //     var n = $(this).attr("id").slice(4);
+    //     console.log(n)
+    //     $.ajax({
+    //     url: "{% url 'getItemData' %}",
+    //     type : 'GET',
+    //     data:{
+    //         id : $(this).val(),
+    //         csrfmiddlewaretoken: '{{ csrf_token }}'
+    //         },
         
-        success: function(response) {
-            if (response.status){
-                document.getElementById('hsn'+n).value = response.hsn;
-                document.getElementById('price'+n).value = response.sale_rate;
-                document.getElementById('tax'+n).value = response.tax;
-            }
-        },
-        });
+    //     success: function(response) {
+    //         if (response.status){
+    //             document.getElementById('hsn'+n).value = response.hsn;
+    //             document.getElementById('price'+n).value = response.sale_rate;
+    //             document.getElementById('tax'+n).value = response.tax;
+    //         }
+    //     },
+    //     });
         
 
-    });
+    // });
 
     function calc() {
         $('#items_table tbody tr').each(function () {
@@ -443,20 +525,28 @@
             if (html != '') {
                 var qty = $(this).find('.qty').val();                
                 var price = $(this).find('.price').val();
-                var vat = $(this).find('.tax').val();
-                if (vat == 'VAT 5%'){
-                    var tax = 5;
+                if($('#state_of_supply').val() == 'State'){
+                    var tax_percentage = $(this).find('.tax-gst').val();
+                }else if($('#state_of_supply').val() == 'Other State'){
+                    var tax_percentage = $(this).find('.tax-igst').val();
                 }
-                else{
-                    var tax = 0;
-                }
+
+                var tax = extractTaxRate(tax_percentage);
 
                 $(this).find('.total').val(parseFloat(qty) * parseFloat(price));
                 $(this).find('.taxamount').val((qty * price) * (tax / 100));
-                console.log('tax==',(qty * price) * (tax / 100));
                 calc_total();
             }
         });
+    }
+
+    function extractTaxRate(label) {
+        var match = label.match(/\[(\d+)%\]/);
+        if (match && match[1]) {
+            return parseFloat(match[1]);
+        } else {
+            return 0;
+        }
     }
 
     function calc_total() {
@@ -474,8 +564,22 @@
         var adj = parseFloat($("#adjustment").val()) || 0;
         var gtot = taxamount + total  + adj;
         $('#grand_total').val(gtot.toFixed(2));
-
+        splitTax();
     }
+
+    function splitTax(){
+        if ($("#state_of_supply").val() == 'State'  ) {
+            gst = taxamount/2
+            $('#cgst_tax').val(parseFloat(gst.toFixed(2)));
+            $('#sgst_tax').val(parseFloat(gst.toFixed(2)));
+            $('#igst_tax').val(0);
+        } else {
+            $('#igst_tax').val(taxamount.toFixed(2));
+            $('#cgst_tax').val(0);
+            $('#sgst_tax').val(0);
+        }
+    }
+
     $(document).on('keyup',"#adjustment",function(){
         var subtot = parseFloat($('#sub_total').val());
         if(subtot != 0.0){

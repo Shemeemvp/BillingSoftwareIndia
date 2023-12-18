@@ -735,8 +735,10 @@ def getItemData(request):
             hsn = item.hsn
             pur_rate = item.purchase_price
             sale_rate = item.sale_price
-            tax = item.tax
-            return JsonResponse({"status":True,'id':item.id,'hsn':hsn,'pur_rate':pur_rate,'sale_rate':sale_rate, 'tax':tax})
+            tax = True if item.tax == "Taxable" else False
+            gst = item.gst
+            igst = item.igst
+            return JsonResponse({"status":True,'id':item.id,'hsn':hsn,'pur_rate':pur_rate,'sale_rate':sale_rate, 'tax':tax,'gst':gst,'igst':igst})
         except Exception as e:
             print(e)
             return JsonResponse({"status":False})
@@ -1097,7 +1099,11 @@ def createNewSale(request):
                     party_name = request.POST['party_name'],
                     phone_number = request.POST['party_phone'],
                     gstin = request.POST['party_gstin'],
+                    state_of_supply = request.POST['stateOfSupply'],
                     subtotal = request.POST['subtotal'],
+                    cgst = request.POST['cgst_tax'],
+                    sgst = request.POST['sgst_tax'],
+                    igst = request.POST['igst_tax'],
                     tax = request.POST['tax'],
                     adjustment = request.POST['adjustment'],
                     total_amount = request.POST['grand_total'],
@@ -1109,7 +1115,7 @@ def createNewSale(request):
                 hsn  = request.POST.getlist("hsn[]")
                 qty = request.POST.getlist("qty[]")
                 price = request.POST.getlist("price[]")
-                tax = request.POST.getlist("tax[]")
+                tax = request.POST.getlist("taxgst[]") if request.POST['stateOfSupply'] == 'State' else request.POST.getlist("taxigst[]")
                 total = request.POST.getlist("total[]")
 
                 sid = Sales.objects.get( bill_no = sale.bill_no)
@@ -1226,8 +1232,12 @@ def updateSaleBill(request,id):
                 bill.phone_number = ""
                 bill.gstin = ""
             
+            bill.state_of_supply = request.POST['stateOfSupply']
             bill.subtotal = request.POST['subtotal']
             bill.tax = request.POST['tax']
+            bill.cgst = request.POST['cgst_tax']
+            bill.sgst = request.POST['sgst_tax']
+            bill.igst = request.POST['igst_tax']
             bill.adjustment = request.POST['adjustment']
             bill.total_amount = request.POST['grand_total']
 
@@ -1238,7 +1248,7 @@ def updateSaleBill(request,id):
             hsn  = request.POST.getlist("hsn[]")
             qty = request.POST.getlist("qty[]")
             price = request.POST.getlist("price[]")
-            tax = request.POST.getlist("tax[]")
+            tax = request.POST.getlist("taxgst[]") if request.POST['stateOfSupply'] == 'State' else request.POST.getlist("taxigst[]")
             total = request.POST.getlist("total[]")
             sales_item_ids = request.POST.getlist("id[]")
             item_ids = [int(id) for id in sales_item_ids]

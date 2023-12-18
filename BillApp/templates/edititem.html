@@ -100,7 +100,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12 col-lg-12">
-                   <form action="{% url 'editItemData' item.id %}" method="post" class="needs-validation">
+                   <form action="{% url 'editItemData' item.id %}" method="post" class="needs-validation" onsubmit="return validateForm()">
                     {% csrf_token %}
                         <div class="row mt-3">
                             <div class="col-md-6 col-lg-6">
@@ -112,7 +112,7 @@
                             <div class="col-md-6 col-lg-6">
                                 <div class="form-group">
                                     <label for="item_hsn">HSN</label>
-                                    <input type="number" name="hsn" value="{{item.hsn}}" id="item_hsn" class="form-control" autocomplete="off" required />
+                                    <input type="number" name="hsn" value="{{item.hsn}}" id="item_hsn" class="form-control" autocomplete="off" onblur="validateHSN()" required />
                                 </div>
                             </div>
                         </div>
@@ -343,6 +343,26 @@
             console.error(xhr.responseText);
             }
         });
+    }
+
+    function validateHSN(){
+        var hsn = $("#item_hsn").val();
+        if (hsn !=""){
+            if (hsn.toString().length < 6){
+                alert('HSN should be a 6 digit or greater number.!')
+            }
+        }
+    }
+
+    function validateForm(){
+        var hsn = $("#item_hsn").val();
+        if (hsn !=""){
+            if (hsn.toString().length < 6){
+                alert('HSN should be a 6 digit or greater number.!')
+                return false;
+            }
+        }
+        return true;
     }
 
 </script>
