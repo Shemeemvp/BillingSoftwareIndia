@@ -9,6 +9,8 @@ urlpatterns = [
     path('logout',views.userLogout, name='userLogout'),
     path('validate_email',views.validateEmail, name='validateEmail'),
     path('validate_username',views.validateUsername, name='validateUsername'),
+    path('validate_phone_number',views.validatePhone, name='validatePhone'),
+    path('validate_company_name',views.validateCompany, name='validateCompany'),
     path('forgot_password',views.forgotPassword, name='forgotPassword'),
     path('show_profile',views.showProfile, name='showProfile'),
     path('update_user_profile',views.updateUserProfile, name='updateUserProfile'),
@@ -66,5 +68,19 @@ urlpatterns = [
     path('stock_reports',views.goStockReports, name='goStockReports'),
     path('item_stock_report/<int:id>',views.itemStockReport, name='itemStockReport'),
     path('share_stock_report_to_email',views.shareStockReportsToEmail, name='shareStockReportsToEmail'),
+
+    path('change_trial_status/<str:status>',views.changeTrialStatus, name='changeTrialStatus'),
+    
+    #ADMIN PANEL -- URLS
+    path('go_registered_clients',views.goRegisteredClients, name='goRegisteredClients'),
+    path('go_demo_clients',views.goDemoClients, name='goDemoClients'),
+    path('go_purchased_clients',views.goPurchasedClients, name='goPurchasedClients'),
+    path('cancel_subscription/<int:id>',views.cancelSubscription, name='cancelSubscription'),
+    path('go_payment_terms',views.goPaymentTerms, name='goPaymentTerms'),
+    path('add_new_payment_term',views.addNewPaymentTerm, name='addNewPaymentTerm'),
+    path('create_payment_term',views.createPaymentTerm, name='createPaymentTerm'),
+    path('delete_payment_term/<int:id>',views.deletePaymentTerm, name='deletePaymentTerm'),
+    path('client_purchase/<int:id>',views.clientPurchase, name='clientPurchase'),
+    path('get_payment_terms',views.getPaymentTerms, name='getPaymentTerms'),
 
 ]

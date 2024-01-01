@@ -4,7 +4,7 @@
 <head>
     {% load static %}
     <meta charset="utf-8">
-    <title>{% block title %}Home{% endblock %}</title>
+    <title>{% block title %}BillingSoftware{% endblock %}</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
@@ -55,44 +55,25 @@
             <nav class="navbar b-primary navbar-dark">
                 <a href="/go_dashboard" class="navbar-brand mx-4 mb-3">
                     <!-- <h3 class="text-primary"><i class="fa fa-user-edit me-2"></i>BillingSoftware</h3> -->
-                    <h4 class="text-light"></i>BillingSoftwareIndia</h4>
+                    <h4 class="text-light"></i>BillingSoftware</h4>
                 </a>
                 <div class="d-flex align-items-center ms-4 mb-4">
                     <div class="position-relative">
-                        {% if not cmp.logo %}
                         <img class="rounded-circle me-lg-2" src="{% static 'assets/img/nouser.jpg' %}" alt="" style="width: 40px; height: 40px;">
-                        {% else %}
-                        <img class="rounded-circle me-lg-2" src="{{cmp.logo.url}}" alt="" style="width: 40px; height: 40px;">
-                        {% endif %}
                         <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
                     </div>
                     <div class="ms-3">
-                        <h6 class="mb-0 text-light text-uppercase">{{cmp.company_name}}</h6>
-                        <span class="text-light">Admin</span>
+                        <h6 class="mb-0 text-light text-uppercase">ADMIN</h6>
+                        <!-- <span class="text-light">Admin</span> -->
                     </div>
                 </div>
                 <div class="navbar-nav w-100">
-                    <li onclick="window.location.href='/go_dashboard'" class="nav-item nav-link nav-dashboard"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</li>
-                    <!-- <a href="/go_dashboard" class="nav-item nav-link nav-dashboard active"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a> -->
-                    <!-- <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown"><i class='bx bxs-package me-2'></i></i>Stock</a>
-                        <div class="dropdown-menu bg-transparent border-0">
-                            <a href="#" class="dropdown-item">Stock</a>
-                            <a href="#" class="dropdown-item">Stock In</a>
-                            
-                        </div>
-                    </div> -->
-                    <li onclick="window.location.href=`{% url 'goItems' %}`" class="nav-item nav-link nav-items"><i class="bx bxs-package me-2"></i>Items<a href="{% url 'addNewItem' %}"><i class="fa-solid fa-plus bg-transparent float-end add-icon"></i></a></li>
-                    <li onclick="window.location.href=`{% url 'goSales' %}`" class="nav-item nav-link nav-sales"><i class="fa fa-shopping-bag me-2"></i>Sales<a href="{% url 'addNewSale' %}"><i class="fa-solid fa-plus bg-transparent float-end add-icon"></i></a></li>
-                    <li onclick="window.location.href=`{% url 'goPurchases' %}`" class="nav-item nav-link nav-purchase"><i class="fa fa-store me-2"></i>Purchase<a href="{% url 'addNewPurchase' %}"><i class="fa-solid fa-plus bg-transparent float-end add-icon"></i></a></li>
-                    <li onclick="window.location.href=`{% url 'goStockReports' %}`" class="nav-item nav-link nav-stockreports"><i class="fas fa-chart-pie me-2"></i>Stock Reports</li>
+                    <!-- <li onclick="window.location.href='/go_admin_dashboard'" class="nav-item nav-link nav-dashboard"><i class="fa fa-tachometer-alt me-2"></i>Dashboard</li> -->
+                    <li onclick="window.location.href=`{% url 'goRegisteredClients' %}`" class="nav-item nav-link nav-reg-clients"><i class="fas fa-users me-2"></i>Registered Clients</li>
+                    <li onclick="window.location.href=`{% url 'goDemoClients' %}`" class="nav-item nav-link nav-demo-clients"><i class="fas fa-user-clock me-2"></i>Demo Clients</li>
+                    <li onclick="window.location.href=`{% url 'goPurchasedClients' %}`" class="nav-item nav-link nav-purchased-clients"><i class="fas fa-user-check me-2"></i>Purchased Clients</li>
+                    <li onclick="window.location.href=`{% url 'goPaymentTerms' %}`" class="nav-item nav-link nav-payment-terms"><i class="fas fa-cubes me-2"></i>Payment Terms<a href="{% url 'addNewPaymentTerm' %}"><i class="fa-solid fa-plus bg-transparent float-end add-icon"></i></a></li>
                 </div>
-                {% if endDate %}
-                <div class="endDate my-3 px-2">
-                    <p class="text-white fw-bold mb-0">Subscription Ends by:</p>
-                    <span class="fs-5 fw-bolder" style="color: #c6aa58;">{{endDate}}</span>
-                </div>
-                {% endif %}
             </nav>
         </div>
         <!-- Sidebar End -->
@@ -103,54 +84,15 @@
             <!-- Navbar Start -->
             <nav class="navbar navbar-expand b-primary navbar-dark sticky-top px-4 py-0">
                 <a href="/go_dashboard" class="navbar-brand d-flex d-lg-none me-4">
-                    <h2 class="text-white mb-0">BSI</h2>
+                    <h2 class="text-white mb-0">BS</h2>
                 </a>
                 <a href="#" class="sidebar-toggler flex-shrink-0" style="text-decoration: none;">
                     <i class="fa fa-bars text-light"></i>
                 </a>
-                <form class="d-none d-md-flex d-sm-flex ms-auto w-50" action="{% url 'redirectPage' %}" method="get">
+                <!-- <form class="d-none d-md-flex d-sm-flex ms-auto w-50" action="{% url 'redirectPage' %}" method="get">
                     <input class="form-control bg-light border-0" name="url" type="search" placeholder="Search" required>
-                </form>
+                </form> -->
                 <div class="navbar-nav align-items-center ms-auto">
-                    <!-- <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="fa fa-envelope me-lg-2"></i>
-                            <span class="d-none d-lg-inline-flex">Message</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end bg-dark border-0 rounded-0 rounded-bottom m-0">
-                            <a href="#" class="dropdown-item">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle" src="{% static 'assets/img/nouser.jpg' %}" alt="" style="width: 40px; height: 40px;">
-                                    <div class="ms-2">
-                                        <h6 class="fw-normal mb-0">Jhon send you a message</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                </div>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle" src="{% static 'assets/img/nouser.jpg' %}" alt="" style="width: 40px; height: 40px;">
-                                    <div class="ms-2">
-                                        <h6 class="fw-normal mb-0">Jhon send you a message</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                </div>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item">
-                                <div class="d-flex align-items-center">
-                                    <img class="rounded-circle" src="{% static 'assets/img/nouser.jpg' %}" alt="" style="width: 40px; height: 40px;">
-                                    <div class="ms-2">
-                                        <h6 class="fw-normal mb-0">Jhon send you a message</h6>
-                                        <small>15 minutes ago</small>
-                                    </div>
-                                </div>
-                            </a>
-                            <hr class="dropdown-divider">
-                            <a href="#" class="dropdown-item text-center">See all message</a>
-                        </div>
-                    </div> -->
 
                     {% if notification %}
                     <div class="nav-item dropdown">
@@ -162,39 +104,28 @@
                             <span class="d-none d-lg-inline-flex">Notification</span>
                         </a>
                         <div class="notification-dropdown dropdown-menu dropdown-menu-end bg-dark border-0 rounded-0 rounded-bottom m-0">
-                            <a href="#" class="dropdown-item">
-                                {% if days == 0 %}
-                                <h6 class="fw-normal mb-0">Your Trial Period expires Today..</h6>
-                                {% else %}
-                                <h6 class="fw-normal mb-0">Your Trial Period expires in {{days}} days..</h6>
-                                {% endif %}
-                                {% if not subscribe %}
-                                <div class="d-flex px-1">
-                                    <small>Want to Purchase.?</small>
-                                    <div class="d-flex justify-content-end align-items-center">
-                                        <a href="{% url 'changeTrialStatus' 'yes' %}" class="text-decoration-none fw-bolder text-success">Yes</a>
-                                        <a href="{% url 'changeTrialStatus' 'no' %}" class="text-decoration-none fw-bolder text-danger ms-3 me-3">Cancel</a>
-                                    </div>    
-                                </div>
-                                {% endif %}
+                            {% for i in renewals %}
+                            <a href="#" class="dropdown-item my-2">
+                                <h6 class="fw-normal mb-0">"{{i.company.company_name}}" wants to purchase..</h6>
+                                <a href="{% url 'goDemoClients' %}" class="text-decoration-none text-success ms-3">Continue</a>
+                                <!-- <a href="#" class="text-decoration-none text-danger ms-2">Reject</a> -->
                             </a>
+                            <hr class="dropdown-divider bg-white">
+                            {% endfor %}
                             <!-- <hr class="dropdown-divider">
                             <a href="#" class="dropdown-item text-center">See all notifications</a> -->
                         </div>
                     </div>
                     {% endif %}
 
+
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            {% if not cmp.logo %}
                             <img class="rounded-circle me-lg-2" src="{% static 'assets/img/nouser.jpg' %}" alt="" style="width: 40px; height: 40px;">
-                            {% else %}
-                            <img class="rounded-circle me-lg-2" src="{{cmp.logo.url}}" alt="" style="width: 40px; height: 40px;">
-                            {% endif %}
-                            <span class="d-none d-lg-inline-flex text-uppercase">{{cmp.company_name}}</span>
+                            <span class="d-none d-lg-inline-flex text-uppercase">ADMIN</span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end bg-dark border-0 rounded-0 rounded-bottom m-0">
-                            <a href="{% url 'showProfile' %}" class="dropdown-item">Profile</a>
+                            <!-- <a href="" class="dropdown-item">Profile</a> -->
                             <!-- <a href="#" class="dropdown-item">Company</a>
                             <a href="#" class="dropdown-item">Settings</a> -->
                             <a href="{% url 'userLogout' %}" class="dropdown-item">Log Out</a>

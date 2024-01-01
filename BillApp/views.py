@@ -18,8 +18,140 @@ from django.contrib.auth.decorators import login_required
 from .models import *
 from openpyxl import load_workbook, Workbook
 from openpyxl.styles import Font, Protection, Alignment
+from django.db.models import Q
 
 # Create your views here.
+
+#Admin Panel
+def goRegisteredClients(request):
+    if request.user.is_staff:
+        all_companies = Company.objects.all()
+        clients = []
+        for i in all_companies:
+            try:
+                trial = ClientTrials.objects.filter(company = i).first()
+            except:
+                trial = None
+            dict = {'company':i,'trial':trial}
+            clients.append(dict)
+        context = {
+            'clients' : clients,
+        }
+        return render(request, 'admin/reg_clients.html',context)
+    else:
+        return('/')
+
+
+def goDemoClients(request):
+    if request.user.is_staff:
+        context = {
+            'clients': ClientTrials.objects.filter(Q(trial_status=True) | (Q(trial_status=False) & Q(subscribe_status='yes'))),
+            'terms' : PaymentTerms.objects.all()
+        }
+        return render(request, 'admin/demo_clients.html',context)
+    else:
+        return redirect('/')
+
+def goPurchasedClients(request):
+    if request.user.is_staff:
+        context = {
+            'clients' : ClientTrials.objects.exclude(purchase_status = 'null')
+        }
+        return render(request, 'admin/purchased_clients.html',context)
+    else:
+        return redirect('/')
+
+def cancelSubscription(request,id):
+    if request.user.is_staff:
+        status = ClientTrials.objects.get(id = id)
+        status.purchase_status = 'cancelled'
+        status.save()
+        messages.success(request, 'Subscription Cancelled.!')
+        return redirect(goPurchasedClients)
+    return redirect('/')
+
+def goPaymentTerms(request):
+    if request.user.is_staff:
+        terms = PaymentTerms.objects.all()
+        return render(request, 'admin/payment_terms.html',{'terms':terms})
+    return redirect('/')
+
+def addNewPaymentTerm(request):
+    if request.user.is_staff:
+        return render(request, 'admin/add_payment_term.html')
+    else:
+        return redirect('/')
+    
+def createPaymentTerm(request):
+    if request.user.is_staff:
+        if request.method == 'POST':
+            dur = request.POST['duration']
+            term = request.POST['term']
+            dys = int(dur) if term == 'Days' else int(dur) * 30
+
+            PaymentTerms.objects.create(duration = dur, term = term, days = dys)
+            messages.success(request, 'Success.!')
+            
+            if 'next_term' in request.POST:
+                return redirect(addNewPaymentTerm)
+            else:
+                return redirect(goPaymentTerms)
+    else:
+        return redirect('/')
+
+def deletePaymentTerm(request, id):
+    if request.user.is_staff:
+        term = PaymentTerms.objects.get(id = id)
+        term.delete()
+        return redirect(goPaymentTerms)
+    return redirect('/')
+
+
+def clientPurchase(request, id):
+    if request.user.is_staff:
+        client = ClientTrials.objects.get(id = id)
+
+        if request.method == 'POST':
+            start = request.POST['purchaseDate']
+            end = request.POST['endDate']
+            term = PaymentTerms.objects.get(id = request.POST['paymentTerm'])
+
+            client.purchase_start_date = start
+            client.purchase_end_date = end
+            client.payment_term = str(term.duration)+" "+term.term
+            client.purchase_status = 'valid'
+            client.trial_status = False
+            client.subscribe_status = 'purchased'
+            client.save()
+
+            messages.success(request,'Success.!')
+            return redirect(goDemoClients)
+        return redirect(goDemoClients)
+    return redirect('/')
+
+
+def getPaymentTerms(request):
+    if request.user.is_staff:
+        try:
+            terms = PaymentTerms.objects.all()
+            list = []
+
+            for item in terms:
+                paymentTerms = {
+                    "id": item.id,
+                    "days": item.days,
+                    "term": item.term,
+                    "duration" : item.duration,
+                }
+                list.append(paymentTerms)
+
+            print(list)
+            return JsonResponse({"terms": list}, safe=False)
+        except Exception as e:
+            print(e)
+            return JsonResponse({"message": "failed"})
+    else:
+        return JsonResponse({"message": "failed"})
 
 
 def login(request):
@@ -166,6 +298,12 @@ def registerUser(request):
             elif User.objects.filter(email=eml).exists():
                 messages.info(request, f"`{eml}` already exists!! Please try another..")
                 return redirect(login)
+            elif Company.objects.filter(phone_number = phn).exists():
+                messages.info(request, f"Phone number already exists!! Please try another..")
+                return redirect(login)
+            elif Company.objects.filter(company_name__iexact=cmpny.lower()).exists():
+                messages.info(request, f"Company Name `{cmpny}` already exists!! Please try another..")
+                return redirect(login)
             else:
                 if pswrd == cpswrd:
                     userInfo = User.objects.create_user(
@@ -186,7 +324,25 @@ def registerUser(request):
                         country = cntry,
                     )
                     cmpnyData.save()
-                    messages.success(request, 'Registration Successful..')
+
+                    #storing trial data
+                    start = date.today()
+                    end = start + timedelta(days=30)
+                    trial = ClientTrials(
+                        user = cData,
+                        company = cmpnyData,
+                        start_date = start,
+                        end_date = end,
+                        trial_status = True,
+                        purchase_start_date = None,
+                        purchase_end_date = None,
+                        purchase_status = "null",
+                        payment_term = None,
+                        subscribe_status = 'null',
+                    )
+                    trial.save()
+
+                    messages.info(request, 'Registration Successful..')
                     return redirect(login)
                 else:
                     messages.warning(request, "Passwords doesn't match..Please try again.")
@@ -206,8 +362,27 @@ def userLogin(request):
 
         user = auth.authenticate(username=uName, password=password)
         if user is not None:
-            auth.login(request, user)
-            return redirect(goDashboard)
+            if user.is_staff:
+                auth.login(request, user)
+                return redirect(goRegisteredClients)
+            else:
+                status = ClientTrials.objects.get(user = user.id)
+                if status.purchase_status == 'valid':
+                    auth.login(request, user)
+                    return redirect(goDashboard)
+                elif status.purchase_status == 'expired':
+                    messages.warning(request, "Your Subscription has been expired.! Contact Admin.")
+                    return redirect(login)
+                elif status.purchase_status == 'cancelled':
+                    messages.warning(request, "Your Subscription has been Cancelled.! Contact Admin.")
+                    return redirect(login)
+                else:
+                    if status.trial_status:
+                        auth.login(request, user)
+                        return redirect(goDashboard)
+                    else:
+                        messages.warning(request, "Your Trial period has been expired.! Contact Admin.")
+                        return redirect(login)
         else:
             messages.info(request, "Incorrect Username or Password..Please try again")
             return redirect(login)
@@ -337,6 +512,22 @@ def validateUsername(request):
     uName = request.GET["username"]
 
     if User.objects.filter(username=uName).exists():
+        return JsonResponse({"is_taken": True})
+    JsonResponse({"is_taken": False})
+
+
+def validatePhone(request):
+    number = request.GET["phone"]
+
+    if Company.objects.filter(phone_number=number).exists():
+        return JsonResponse({"is_taken": True})
+    JsonResponse({"is_taken": False})
+
+
+def validateCompany(request):
+    cmp = request.GET["company"]
+
+    if Company.objects.filter(company_name__iexact=cmp.lower()).exists():
         return JsonResponse({"is_taken": True})
     JsonResponse({"is_taken": False})
 
@@ -1670,10 +1861,7 @@ def shareStockReportsToEmail(request):
                 workbook.save(excelfile)
                 mail_subject = f'Stock Reports - {date.today()}'
                 message = f"Hi,\nPlease find the STOCK REPORTS file attached. \n{email_message}\n\n--\nRegards,\n{cmp.company_name}\n{cmp.address}\n{cmp.state} - {cmp.country}\n{cmp.phone_number}"
-                to_email = "shemeemvp123@gmail.com"
-                fromEmail = 'niyavijayan@gmail.com'
-                # message = EmailMessage(mail_subject, message, settings.EMAIL_HOST_USER, emails_list)
-                message = EmailMessage(mail_subject, message, fromEmail, [to_email])
+                message = EmailMessage(mail_subject, message, settings.EMAIL_HOST_USER, emails_list)
                 message.attach(f'Stock Reports-{date.today()}.xlsx', excelfile.getvalue(), 'application/vnd.ms-excel')
                 message.send(fail_silently=False)
 
@@ -1682,3 +1870,13 @@ def shareStockReportsToEmail(request):
         except Exception as e:
             print(e)
             return redirect(goStockReports)
+        
+
+def changeTrialStatus(request, status):
+    if request.user:
+        trial = ClientTrials.objects.get(user = request.user)
+        trial.subscribe_status = status
+        trial.save()
+        # return HttpResponse('<script>alert("Success.!");window.history.back();</script>')
+        messages.success(request,'Success.!')
+        return redirect(goDashboard)
