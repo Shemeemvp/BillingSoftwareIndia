@@ -182,8 +182,8 @@
                                 </thead>
                                 <tbody id="sale-items-table-body">
                                     {% for p in sales_items %}
-                                    <tr id='addr0{{forloop.counter}}'>
-                                        <td class="item_sl_num">{{forloop.counter}}<input type="text" id="saleEntryId{{forloop.counter}}" name='id[]' value="{{ p.id }}" hidden></td>
+                                    <tr id='addr{{forloop.counter}}'>
+                                        <td class="item_sl_num">{{forloop.counter}}</td>
                                         <td>
                                             <div class="w-100">
                                                 <div class="p-0 border-0 bg-none position-relative drop-box" style="display: block;">
@@ -200,15 +200,16 @@
                                         <td>
                                             <input type="number" name='hsn[]' value="{{p.hsn}}" id="hsn{{forloop.counter}}" placeholder='HSN Code' class="form-control"/>
                                             <input type="text" name="sItems[]" id="sitem1" value="{{p.item.id}}" hidden>
+                                            <input type="text" id="saleEntryId{{forloop.counter}}" name='id[]' value="{{ p.id }}" hidden>
                                         </td>
                                         <td><input type="number" name='qty[]' value="{{p.quantity}}" placeholder='Quantity' id="qty{{forloop.counter}}" value="" class="form-control qty" min="1" required/></td>
                                         <td><input type="number" name='price[]' value="{{p.rate}}" id="price{{forloop.counter}}" placeholder='Unit Price' class="form-control price" step="0.00" min="0" /></td>
                                         <td>
-                                            <input type="text" name="taxgst[]" class="form-control tax tax-gst" placeholder="0 %" value="{{p.item.gst|default:0}}" id="taxgst1" style="display: block;" readonly>
-                                            <input type="text" name="taxigst[]" class="form-control tax tax-igst" placeholder="0 %" value="{{p.item.igst|default:0}}" id="taxigst1" style="display: none;" readonly>
+                                            <input type="text" name="taxgst[]" class="form-control tax tax-gst" placeholder="0 %" value="{{p.item.gst|default:0}}" id="taxgst{{forloop.counter}}" style="display: block;" readonly>
+                                            <input type="text" name="taxigst[]" class="form-control tax tax-igst" placeholder="0 %" value="{{p.item.igst|default:0}}" id="taxigst{{forloop.counter}}" style="display: none;" readonly>
                                         </td>
                                         <td><input type="number" name='total[]' value="{{p.total}}" id="total{{forloop.counter}}" class="form-control total" value="0" step="any" readonly /></td>
-                                        <td style="display: none;"><input type="number" step="any" name='taxamount{{forloop.counter}}' id="taxamount1" class="form-control taxamount"/></td></td>
+                                        <td style="display: none;"><input type="number" step="any" name='taxamount{{forloop.counter}}' id="taxamount{{forloop.counter}}" class="form-control taxamount"/></td></td>
                                         <td>
                                             <button type="button" id="{{forloop.counter}}" class="btn clone_row btn-outline-secondary mb-1 w-100" title="Clone Row">+</button><br>
                                             <button type="button" id="{{forloop.counter}}" class="btn remove_row btn-outline-secondary w-100" title="Remove Row">-</button>
@@ -429,12 +430,29 @@
         $('#check_party').is(":checked") ? $('#party_details').css('display','flex') : $('#party_details').css('display','none');
     })
 
+    function refreshIndex(){
+        var slNo = 1;
+        var $rows = $("#sale-items-table-body tr");
+
+        for (var i = 0; i < $rows.length; i++) {
+            $rows.eq(i).attr('id', 'addr'+slNo)
+            $rows.eq(i).find('[id]').each(function() {
+                var oldId = $(this).attr('id');
+                var newId = oldId.replace(/\d+/, slNo);
+                $(this).attr('id', newId );
+            });
+
+            $rows.eq(i).find('.item_sl_num').text(slNo);
+            slNo++;
+        }
+    }
+
     // table row clone and remove.
     $(document).on('click','.remove_row',function(){
         var row_id = $(this).attr("id");
         console.log(row_id);
-        $('#addr0'+row_id+'').remove();
-        
+        $('#addr'+row_id+'').remove();
+        refreshIndex();
         calc();
     });
 
@@ -444,9 +462,9 @@
         var originalRow = $(this).closest('#sale-items-table-body tr'); 
         var clonedRow = originalRow.clone();
 
-        clonedRow.attr('id', 'addr0' +(roinc+1));
+        clonedRow.attr('id', 'addr' +(roinc+1));
 
-        clonedRow.find('.item_sl_num').html(roinc+1+`<input type="text"  name='id[]' value=0 hidden>`);
+        // clonedRow.find('.item_sl_num').html(roinc+1+`<input type="text"  name='id[]' value=0 hidden>`);
         clonedRow.find('.item-display').attr('id', 'item'+(roinc+1));
         clonedRow.find('.items-available').attr('id', 'menu'+(roinc+1));
 
@@ -467,7 +485,7 @@
         });
 
         originalRow.after(clonedRow);
-        
+        refreshIndex();
         calc();
         
     });
@@ -476,7 +494,7 @@
             var roinc = $("#sale-items-table-body tr").length;
             roinc++;
             $('#sale-items-table-body').append(
-                `<tr id='addr0${roinc}'>
+                `<tr id='addr${roinc}'>
                     <td class="item_sl_num">${roinc}<input type="text" id="saleEntryId${roinc}" name='id[]' value=0 hidden></td>
                     <td>
                         <div class="w-100">

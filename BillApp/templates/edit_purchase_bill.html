@@ -182,8 +182,8 @@
                                 </thead>
                                 <tbody id="pur-items-table-body">
                                     {% for p in purchase_items %}
-                                    <tr id='addr0{{forloop.counter}}'>
-                                        <td class="item_sl_num">{{forloop.counter}}<input type="text" id="purchaseEntryId{{forloop.counter}}" name='id[]' value="{{ p.id }}" hidden></td>
+                                    <tr id='addr{{forloop.counter}}'>
+                                        <td class="item_sl_num">{{forloop.counter}}</td>
                                         <td>
                                             <div class="w-100">
                                                 <div class="p-0 border-0 bg-none position-relative drop-box" style="display: block;">
@@ -200,6 +200,7 @@
                                         <td>
                                             <input type="number" name='hsn[]' id="hsn{{forloop.counter}}" placeholder='HSN Code' value="{{p.hsn}}" class="form-control"/>
                                             <input type="text" name="pItems[]" id="pitem1" value="{{p.item.id}}" hidden>
+                                            <input type="text" id="purchaseEntryId{{forloop.counter}}" name='id[]' value="{{ p.id }}" hidden>
                                         </td>
                                         <td><input type="number" name='qty[]'placeholder='Quantity' id="qty{{forloop.counter}}" value="{{p.quantity}}" class="form-control qty" min="1" required/></td>
                                         <td><input type="number" name='price[]' id="price{{forloop.counter}}" placeholder='Unit Price' value="{{p.rate}}" class="form-control price" step="0.00" min="0" /></td>
@@ -429,12 +430,29 @@
         $('#check_party').is(":checked") ? $('#party_details').css('display','flex') : $('#party_details').css('display','none');
     })
 
+    function refreshIndex(){
+        var slNo = 1;
+        var $rows = $("#pur-items-table-body tr");
+
+        for (var i = 0; i < $rows.length; i++) {
+            $rows.eq(i).attr('id', 'addr'+slNo)
+            $rows.eq(i).find('[id]').each(function() {
+                var oldId = $(this).attr('id');
+                var newId = oldId.replace(/\d+/, slNo);
+                $(this).attr('id', newId );
+            });
+
+            $rows.eq(i).find('.item_sl_num').text(slNo);
+            slNo++;
+        }
+    }
+
     // table row clone and remove.
     $(document).on('click','.remove_row',function(){
         var row_id = $(this).attr("id");
         console.log(row_id);
-        $('#addr0'+row_id+'').remove();
-        
+        $('#addr'+row_id+'').remove();
+        refreshIndex();
         calc();
     });
 
@@ -444,9 +462,9 @@
         var originalRow = $(this).closest('#pur-items-table-body tr'); 
         var clonedRow = originalRow.clone();
 
-        clonedRow.attr('id', 'addr0' +(roinc+1));
+        clonedRow.attr('id', 'addr' +(roinc+1));
 
-        clonedRow.find('.item_sl_num').html(roinc+1+`<input type="text"  name='id[]' value=0 hidden>`);
+        // clonedRow.find('.item_sl_num').html(roinc+1+`<input type="text"  name='id[]' value=0 hidden>`);
         clonedRow.find('.item-display').attr('id', 'item'+(roinc+1));
         clonedRow.find('.items-available').attr('id', 'menu'+(roinc+1));
         
@@ -467,7 +485,7 @@
         });
 
         originalRow.after(clonedRow);
-        
+        refreshIndex();
         calc();
         
     });
@@ -477,8 +495,8 @@
             var roinc = $("#pur-items-table-body tr").length;
             roinc++;
             $('#pur-items-table-body').append(
-                `<tr id='addr0${roinc}'>
-                    <td class="item_sl_num">${roinc}<input type="text" id="purchaseEntryId${roinc}" name='id[]' value="0" hidden></td>
+                `<tr id='addr${roinc}'>
+                    <td class="item_sl_num">${roinc}</td>
                     <td>
                         <div class="w-100">
                             <div class="p-0 border-0 bg-none position-relative drop-box" style="display: block;">
@@ -495,6 +513,7 @@
                     <td>
                         <input type="number" name='hsn[]' id="hsn${roinc}" placeholder='HSN Code' class="form-control"/>
                         <input type="text" name="pItems[]" id="pitem${roinc}" hidden>
+                        <input type="text" id="purchaseEntryId${roinc}" name='id[]' value="0" hidden>
                     </td>
                     <td><input type="number" name='qty[]'placeholder='Quantity' id="qty${roinc}" value="" class="form-control qty" min="1" required/></td>
                     <td><input type="number" name='price[]' id="price${roinc}" placeholder='Unit Price' class="form-control price" step="0.00" min="0" /></td>
