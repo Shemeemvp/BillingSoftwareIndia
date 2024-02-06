@@ -153,6 +153,8 @@ def getPaymentTerms(request):
     else:
         return JsonResponse({"message": "failed"})
 
+def index(request):
+    return render(request, "index.html")
 
 def login(request):
     return render(request, "login.html")
@@ -327,7 +329,8 @@ def registerUser(request):
 
                     #storing trial data
                     start = date.today()
-                    end = start + timedelta(days=30)
+                    # end = start + timedelta(days=30)
+                    end = start + timedelta(days=0)
                     trial = ClientTrials(
                         user = cData,
                         company = cmpnyData,
@@ -342,7 +345,7 @@ def registerUser(request):
                     )
                     trial.save()
 
-                    messages.info(request, 'Registration Successful..')
+                    messages.success(request, 'Registration Successful..')
                     return redirect(login)
                 else:
                     messages.warning(request, "Passwords doesn't match..Please try again.")
