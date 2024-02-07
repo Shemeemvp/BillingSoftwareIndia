@@ -152,6 +152,19 @@ def getPaymentTerms(request):
             return JsonResponse({"message": "failed"})
     else:
         return JsonResponse({"message": "failed"})
+    
+def removeUser(request,id):
+    if request.user.is_staff:
+        try:
+            usr = User.objects.get(id = id)
+            usr.delete()
+            return redirect(goRegisteredClients)
+        except Exception as e:
+            print(e)
+            return redirect(goRegisteredClients)
+    else:
+        return redirect('/')
+
 
 def index(request):
     return render(request, "index.html")
@@ -356,6 +369,84 @@ def registerUser(request):
     except Exception as e:
         print(e)
         return redirect(login)
+    
+def registerTrialUser(request):
+    try:
+        if request.method == "POST":
+            usrnm = request.POST["username"]
+            eml = request.POST["email"]
+            phn = request.POST["phone"]
+            adrs = request.POST["address"]
+            gstn = request.POST["gstnum"]
+            cmpny = request.POST["company"]
+            state = request.POST['state']
+            cntry = request.POST['country']
+            pswrd = request.POST["password"]
+            cpswrd = request.POST["confirmPassword"]
+
+            if User.objects.filter(username=usrnm).exists():
+                res = f'<script>alert("User name `{usrnm}` already exists, Please Login or try another.!");window.history.back();</script>'
+                return HttpResponse(res)
+            elif User.objects.filter(email=eml).exists():
+                res = f'<script>alert("Email `{eml}` already exists!! Please try another..");window.history.back();</script>'
+                return HttpResponse(res)
+            elif Company.objects.filter(phone_number = phn).exists():
+                res = f'<script>alert("Phone number already exists!! Please try another..");window.history.back();</script>'
+                return HttpResponse(res)
+            elif Company.objects.filter(company_name__iexact=cmpny.lower()).exists():
+                res = f'<script>alert("Company Name `{cmpny}` already exists!! Please try another..");window.history.back();</script>'
+                return HttpResponse(res)
+            else:
+                if pswrd == cpswrd:
+                    userInfo = User.objects.create_user(
+                        username=usrnm,
+                        email=eml,
+                        password=pswrd,
+                    )
+                    userInfo.save()
+                    print("auth user saved...")
+                    cData = User.objects.get(id=userInfo.id)
+                    cmpnyData = Company(
+                        user=cData,
+                        company_name=cmpny,
+                        phone_number=phn,
+                        address=adrs,
+                        gst_number=gstn,
+                        state = state,
+                        country = cntry,
+                    )
+                    cmpnyData.save()
+
+                    #storing trial data
+                    start = date.today()
+                    # end = start + timedelta(days=30)
+                    end = start + timedelta(days=0)
+                    trial = ClientTrials(
+                        user = cData,
+                        company = cmpnyData,
+                        start_date = start,
+                        end_date = end,
+                        trial_status = True,
+                        purchase_start_date = None,
+                        purchase_end_date = None,
+                        purchase_status = "null",
+                        payment_term = None,
+                        subscribe_status = 'null',
+                    )
+                    trial.save()
+
+                    messages.success(request, 'Registration Successful..')
+                    return redirect(login)
+                else:
+                    # messages.warning(request, "Passwords doesn't match..Please try again.")
+                    # return redirect(login)
+                    res = f'<script>alert("Passwords does not match..Please try again..");window.history.back();</script>'
+                    return HttpResponse(res)
+        else:
+            return redirect('/')
+    except Exception as e:
+        print(e)
+        return redirect('/')
 
 
 def userLogin(request):

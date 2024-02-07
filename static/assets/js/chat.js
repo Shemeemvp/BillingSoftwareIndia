@@ -2,7 +2,9 @@
   const faq = [
     { question: "hai", answer: "Hai How can i help you ?" },
     { question: "hello", answer: "Hai How can i help you ?" },
-    { question: "hi", answer: "Hai How can i help you ?" },
+    { question: "hi..", answer: "Hai How can i help you ?" },
+    { question: "Hi..", answer: "Hai How can i help you ?" },
+    { question: "Hi", answer: "Hai How can i help you ?" },
     { question: "goodbye", answer: "Talk to you later!" },
     { question: "nice talking to you!", answer: "I am glad I could help" },
 
