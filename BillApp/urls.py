@@ -4,6 +4,7 @@ from BillApp import views
 
 urlpatterns = [
     path('',views.index, name='index'),
+    path('blog',views.goBlog, name='goBlog'),
     path('login',views.login, name='login'),
     # path('',views.login, name='login'),
     path('register_user',views.registerUser, name='registerUser'),

@@ -169,6 +169,9 @@ def removeUser(request,id):
 def index(request):
     return render(request, "index.html")
 
+def goBlog(request):
+    return render(request, "blog.html")
+
 def login(request):
     return render(request, "login.html")
 
