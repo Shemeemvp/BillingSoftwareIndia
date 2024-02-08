@@ -602,7 +602,8 @@ def validateEmail(request):
 
     if User.objects.filter(email=email).exists():
         return JsonResponse({"is_taken": True})
-    JsonResponse({"is_taken": False})
+    else:
+        return JsonResponse({"is_taken": False})
 
 
 def validateUsername(request):
@@ -610,7 +611,8 @@ def validateUsername(request):
 
     if User.objects.filter(username=uName).exists():
         return JsonResponse({"is_taken": True})
-    JsonResponse({"is_taken": False})
+    else:
+        return JsonResponse({"is_taken": False})
 
 
 def validatePhone(request):
@@ -618,7 +620,8 @@ def validatePhone(request):
 
     if Company.objects.filter(phone_number=number).exists():
         return JsonResponse({"is_taken": True})
-    JsonResponse({"is_taken": False})
+    else:
+        return JsonResponse({"is_taken": False})
 
 
 def validateCompany(request):
@@ -626,7 +629,8 @@ def validateCompany(request):
 
     if Company.objects.filter(company_name__iexact=cmp.lower()).exists():
         return JsonResponse({"is_taken": True})
-    JsonResponse({"is_taken": False})
+    else:
+        return JsonResponse({"is_taken": False})
 
 
 @login_required(login_url="login")

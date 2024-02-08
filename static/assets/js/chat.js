@@ -54,7 +54,9 @@
       if (matchingQuestion) {
         displayMessage(matchingQuestion.answer); // Display the corresponding answer
       } else {
-        displayMessage("Please contact Us for more details, tel: +91 9074 156 818 "); // Display default response
+        displayMessage("Please contact Us for more details.."); // Display default response
+        isUserMessage = false
+        displayMessage("Tel: +91 9074 156 818"); // Display default response
       }
     }
   });

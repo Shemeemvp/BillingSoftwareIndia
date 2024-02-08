@@ -5,8 +5,8 @@
     {% load static %}
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <link href="{% static 'assets/css/pace.min.css' %}" rel="stylesheet" />
-  <script src="{% static 'assets/js/pace.min.js' %}"></script>
+  <!-- <link href="{% static 'assets/css/pace.min.css' %}" rel="stylesheet" />
+  <script src="{% static 'assets/js/pace.min.js' %}"></script> -->
 
   <title>BillingSoftwareIndia</title>
   <meta content="" name="description">
@@ -436,6 +436,12 @@ h1, h2, h3, h4, h5, h6 {
   transition: all ease-in-out 0.3s;
   display: inline-block;
   background: #003e27;
+}
+
+@media screen and (max-width: 768px) {
+  #hero .btn-get-trial {
+  padding: 10px 25px;
+}
 }
 
 #hero .btn-get-trial:hover {
@@ -1102,6 +1108,16 @@ section {
     bottom: 60px;
     right: 0.7em;
 }
+@media screen and (max-width: 768px) {
+  .chat-box-section {
+    max-width: 70%;
+}
+}
+@media screen and (max-width: 300px) {
+  .chat-box-section {
+    max-width: 92%;
+}
+}
 .chatbox-button{
   background: #C6AA58;
   padding: 0.47em;
@@ -1185,6 +1201,13 @@ section {
     grid-template-columns: 15% 85%;
     padding: 0 0.4rem;
     position: relative;
+}
+.eye-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
 }
 .input-field.textarea {
     max-width: 380px;
@@ -1310,14 +1333,14 @@ section {
               class="d-block w-100"
               alt="..."
             />
-            <div class="carousel-caption d-none d-md-block top-0 mt-5">
+            <div class="carousel-caption d-none d-sm-block top-0 mt-5">
                 <h3>What is Lorem Ipsum?</h3>
                 <p class="mt-3">
                   Lorem Ipsum is simply dummy text of the printing and typesetting industry.<br>
                   Voluptatem dignissimos provident quasi corporis voluptates sit assumenda.
                 </p>
             </div>
-            <div class="carousel-caption getTrialBtn1">
+            <div class="carousel-caption getTrialBtn1 d-none d-md-block">
               <a href="#registerTrial" data-bs-toggle="modal" class="btn-get-trial trialBtn">Get Free Trial</a>
             </div>
           </div>
@@ -1327,11 +1350,11 @@ section {
               class="d-block w-100"
               alt="..."
             />
-            <div class="carousel-caption d-none d-md-block top-0 mt-5">
+            <div class="carousel-caption d-none d-sm-block top-0 mt-5">
               <h3>What is Lorem Ipsum?</h3>
               <p class="mt-3">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
             </div>
-            <div class="carousel-caption getTrialBtn2">
+            <div class="carousel-caption getTrialBtn2 d-none d-md-block">
               <a href="#registerTrial" data-bs-toggle="modal" class="btn-get-trial trialBtn">Get Free Trial</a>
             </div>
           </div>
@@ -1341,11 +1364,11 @@ section {
               class="d-block w-100"
               alt="..."
             />
-            <div class="carousel-caption d-none d-md-block top-0 mt-5 mr-4">
+            <div class="carousel-caption d-none d-sm-block top-0 mt-5 mr-4">
               <h3>What is Lorem Ipsum?</h3>
               <p class="mt-3">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
             </div>
-            <div class="carousel-caption getTrialBtn1">
+            <div class="carousel-caption getTrialBtn1 d-none d-md-block">
               <a href="#registerTrial" data-bs-toggle="modal" class="btn-get-trial trialBtn">Get Free Trial</a>
             </div>
           </div>
@@ -1647,7 +1670,7 @@ section {
           <div class="col-lg-6 mt-4 mt-lg-0">
             <div class="mapouter" style="border: 1;">
               <div class="gmap_canvas">
-                <iframe class="gmap_iframe" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d497698.77491009404!2d77.30125737578491!3d12.954459540834819!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae1670c9b44e6d%3A0xf8dfc3e8517e4fe0!2sBengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1707283865455!5m2!1sen!2sin"></iframe>
+                <iframe class="gmap_iframe" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.0739866451886!2d76.35812367376452!3d10.01074747285229!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b080d9bfaa6db61%3A0xa5df6acfc2d1e5fd!2sALTOS%20Technologies!5e0!3m2!1sen!2sin!4v1707387050232!5m2!1sen!2sin"></iframe>
                 <!-- <a href="https://www.embedmymap.com/">Embed My Map</a> -->
               </div>
             </div>
@@ -1660,21 +1683,22 @@ section {
                 <div class="info-box" data-aos="fade-up">
                   <i class="bx bx-map"></i>
                   <h3>Our Address</h3>
-                  <p>ABC Street, 3rd Lane, NY, New Delhi-IN</p>
+                  <p>1st Floor - Thapasya Building Infopark, Kakkanad, Cochin</p>
+                  <!-- <p>First floor,D Block Tidel park,Tharamani, Chennai, Tamilnadu 600113</p> -->
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="info-box mt-4" data-aos="fade-up" data-aos-delay="100">
                   <i class="bx bx-envelope"></i>
                   <h3>Email Us</h3>
-                  <p>billingsoftwareindia@example.com<br>billingsoftwareindia@example.com</p>
+                  <p>Info@ altostechnologies.com</p>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="info-box mt-4" data-aos="fade-up" data-aos-delay="100">
                   <i class="bx bx-phone-call"></i>
                   <h3>Call Us</h3>
-                  <p>+91 9998887777<br>+91 9998887777</p>
+                  <p>+91 90741 56818</p>
                 </div>
               </div>
             </div>
@@ -1774,51 +1798,55 @@ section {
           {% csrf_token %}
           <div class="modal-body">
             <div class="row">
-                <div class="col-6">
+                <div class="col-md-6">
                     <div class="input-field">
                         <i class="fas fa-user"></i>
                         <input type="text" placeholder="Username" name="username" id="user" required/>
                     </div>
+                    <span class="text-danger" style="font-size: 0.85rem; width: max-content; display: none;" id="userErr">User Name already exists..!</span>
                 </div>
-                <div class="col-6">
+                <div class="col-md-6">
                     <div class="input-field">
                         <i class="fas fa-envelope"></i>
                         <input type="email" placeholder="Email" name="email" pattern="[^@\s]+@[^@\s]+\.[^@\s]+" id="email" required/>
                     </div>
+                    <span class="text-danger" style="font-size: 0.85rem; width: max-content; display: none;" id="emailErr">Email already exists..!</span>
                 </div>
-                <div class="col-6">
+                <div class="col-md-6">
                     <div class="input-field">
                         <i class="fas fa-phone"></i>
                         <input type="tel" placeholder="Phone Number" name="phone" id="phone" title="Ex: 9048986656" required/>
                     </div>
+                    <span class="text-danger" style="font-size: 0.85rem; width: max-content; display: none;" id="phoneErr">Phone Number already exists..!</span>
                 </div>
-                <div class="col-6">
+                <div class="col-md-6">
                     <div class="input-field">
                         <i class="fa fa-building"></i>
                         <input type="text" placeholder="Company Name" name="company" id="company" required/>
                     </div>
+                    <span class="text-danger" style="font-size: 0.85rem; width: max-content; display: none;" id="cmpErr">Company Name already exists..!</span>
                 </div>
-                <div class="col-6">
+                <div class="col-md-6">
                     <div class="input-field">
                         <i class="fa fa-pencil"></i>
                         <input type="text" placeholder="GST Number(optional)" name="gstnum" id="gstin" title="Ex: 22AAAAA0000A1Z5"/>
                         <div class="text-danger" style="font-size: 0.85rem; width: max-content;font-weight: 600;" id="gstErr"></div>
                     </div>
                 </div>
-                <div class="col-6">
+                <div class="col-md-6">
                     <div class="input-field">
                         <i class="fa fa-address-card"></i>
                         <input type="text" name="address" placeholder="Address" id="address" cols="" rows="3" required/>
                         <!-- <textarea name="address" placeholder="Address" id="address" cols="" rows="3" required></textarea> -->
                     </div>
                 </div>
-                <div class="col-6">
+                <div class="col-md-6">
                     <div class="input-field">
                         <i class="fa fa-globe"></i>
                         <input type="text" placeholder="Country" name="country" id="couuntry" required/>
                     </div>
                 </div>
-                <div class="col-6">
+                <div class="col-md-6">
                     <div class="input-field">
                         <i class="fa fa-map-signs"></i>
                         <!-- <input type="text" placeholder="State" name="state" id="state" required/> -->
@@ -1865,23 +1893,23 @@ section {
                         </select>
                     </div>
                 </div>
-                <div class="col-6">
-                    <div class="input-field">
+                <div class="col-md-6">
+                    <div class="input-field password-container">
                         <i class="fas fa-lock"></i>
-                        <input type="password" placeholder="Password" 
-                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"  name="password" id="pwd"/>
+                        <input type="password" placeholder="Password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"  name="password" id="pwd"/>
+                        <i class="fa fa-eye eye-icon" onclick="togglePasswordVisibility1()"></i>
                         <div class="text-danger" style="font-size: 0.85rem; width: max-content;" id="passErr"></div>
                     </div>
-                    <div class="form-check">
+                    <!-- <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="" id="showPassword">
                         <label class="form-check-label" for="showPassword">Show Password</label>
-                    </div>
+                    </div> -->
                 </div>
-                <div class="col-6">
+                <div class="col-md-6">
                     <div class="input-field">
                         <i class="fas fa-lock"></i>
-                        <input type="password" placeholder="Confirm Password"
-                        pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters"  name="confirmPassword" id="cnfpwd"/>
+                        <input type="password" placeholder="Confirm Password" name="confirmPassword" id="cnfpwd" required/>
+                        <!-- <i class="fa fa-eye eye-icon" onclick="togglePasswordVisibility2()"></i> -->
                         <div class="text-danger" style="font-size: 0.85rem; width: max-content;" id="cnfrmPassErr"></div>
                     </div>
                 </div>
@@ -1908,13 +1936,21 @@ section {
   <!-- Template chat JS File -->
   <script src="{% static 'assets/js/chat.js' %}"></script>
   <script>
-    $(document).ready(function(){
-        $('#showPassword').on('change',function(){
-            $('#showPassword').prop('checked') ? $('#pwd').attr('type','text') : $('#pwd').attr('type','password');
-            console.log('click status == ',$('#showPassword').prop('checked'));
-            console.log('Attr type--',$('#pwd').attr('type'));
-        });
-    });
+    function togglePasswordVisibility1(){
+      if($('#pwd').attr('type') == 'text'){
+        $('#pwd').attr('type','password')
+      }else{
+        $('#pwd').attr('type','text')
+      }
+    }
+
+    function togglePasswordVisibility2(){
+      if($('#cnfpwd').attr('type') == 'text'){
+        $('#cnfpwd').attr('type','password')
+      }else{
+        $('#cnfpwd').attr('type','text')
+      }
+    }
 
     $(document).ready(function() {
       setTimeout(function() {
@@ -1989,7 +2025,9 @@ section {
       dataType: 'json',
       success: function (data) {
         if (data.is_taken) {
-          alert("Email already exists.!");
+          $('#emailErr').show()
+        }else{
+          $('#emailErr').hide()
         }
       }
     });
@@ -2006,7 +2044,7 @@ function deactivateForm(){
 }
 
 $(document).ready(function(){
-    $("#user").on('input',function () {
+    $("#user").blur(function () {
         if($('#register-form').hasClass('form_active')){
             var user = $(this).val();
             $.ajax({
@@ -2016,9 +2054,11 @@ $(document).ready(function(){
                 },
                 dataType: 'json',
                 success: function (data) {
-                if (data.is_taken) {
-                    alert("User name already exists.");
-                }
+                  if (data.is_taken) {
+                    $('#userErr').show()
+                  }else{
+                    $('#userErr').hide()
+                  }
                 }
             });   
         }
@@ -2037,9 +2077,11 @@ $(document).ready(function(){
             },
             dataType: 'json',
             success: function (data) {
-                if (data.is_taken) {
-                alert("Phone Number already exists.!");
-                }
+              if (data.is_taken) {
+                    $('#phoneErr').show()
+                  }else{
+                    $('#phoneErr').hide()
+                  }
             }
             });
         }
@@ -2058,9 +2100,11 @@ $(document).ready(function(){
             },
             dataType: 'json',
             success: function (data) {
-                if (data.is_taken) {
-                alert("Company Name already exists.!");
-                }
+              if (data.is_taken) {
+                $('#cmpErr').show()
+              }else{
+                $('#cmpErr').hide()
+              }
             }
             });
         }
