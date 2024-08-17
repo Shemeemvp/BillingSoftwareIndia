@@ -88,4 +88,9 @@ urlpatterns = [
     path('get_payment_terms',views.getPaymentTerms, name='getPaymentTerms'),
     path('remove_user/<int:id>',views.removeUser, name='removeUser'),
 
+
+    # Barcode - updates
+    path('check_item_barcode', views.checkItemBarcode, name='checkItemBarcode'),
+    path('get_barcode_details',views.getBarcodeDetails, name='getBarcodeDetails'),
+
 ]

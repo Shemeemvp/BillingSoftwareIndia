@@ -680,6 +680,15 @@ def createNewItem(request):
         cmp = Company.objects.get(user=request.user.id)
         try:
             if request.method == "POST":
+                bc = request.POST["barcode"]
+                if bc!="":
+                    bc = bc.upper()
+                if Items.objects.filter(cid=cmp, barcode = bc).exists():
+                    # res = f'<script>alert("Barcode already exists with another item.\nTry again.!");window.history.back();</script>'
+                    # return HttpResponse(res)
+                    messages.error(request, "Barcode already exists with another item, Please try again..!")
+                    return redirect(addNewItem)
+
                 item = Items(
                     cid=cmp,
                     name=request.POST["name"],
@@ -691,6 +700,7 @@ def createNewItem(request):
                     sale_price=request.POST["sale_price"],
                     purchase_price=request.POST["purchase_price"],
                     stock=request.POST["stock"],
+                    barcode=bc,
                 )
                 item.save()
 
@@ -764,6 +774,16 @@ def editItemData(request,id):
         diff = abs(crQty - chQty)
         try:
             if request.method == 'POST':
+                bc = request.POST["barcode"]
+                if bc!="":
+                    bc = bc.upper()
+
+                if item.barcode != bc and Items.objects.filter(cid=cmp, barcode = bc).exists():
+                    # res = f"<script>alert('Barcode already exists with another item.\nTry again');window.location.back();</script>"
+                    # return HttpResponse(res)
+                    messages.error(request, "Barcode already exists with another item, Please try again..!")
+                    return redirect(editItem, id)
+
                 item.name = request.POST['name']
                 item.hsn = request.POST['hsn']
                 item.unit = request.POST['item_unit']
@@ -772,6 +792,7 @@ def editItemData(request,id):
                 item.igst = 'IGST0[0%]' if 'tax_ref' in request.POST else request.POST['interStateTax']
                 item.sale_price = request.POST['sale_price']
                 item.purchase_price = request.POST['purchase_price']
+                item.barcode = bc
                 
                 if chQty > crQty:
                     item.stock += diff
@@ -1981,3 +2002,46 @@ def changeTrialStatus(request, status):
         # return HttpResponse('<script>alert("Success.!");window.history.back();</script>')
         messages.success(request,'Success.!')
         return redirect(goDashboard)
+    
+
+# Barcode - updates
+
+@login_required(login_url="login")
+def checkItemBarcode(request):
+    if request.user:
+        try:
+            cmp = Company.objects.get(user = request.user.id)
+            bc = request.POST['barcode']
+            if Items.objects.filter(cid = cmp, barcode = bc).exists():
+                item = Items.objects.get(cid = cmp, barcode = bc)
+                return JsonResponse({'status':False, 'message':f"Barcode is already associated with item - '{item.name}',\nTry again.."})
+            else:
+                return JsonResponse({"status": True})
+        except Exception as e:
+            print(e)
+            return JsonResponse({'status':False, 'message':'something went wrong'})
+    return redirect('/')
+
+
+@login_required(login_url="login")
+def getBarcodeDetails(request):
+    if request.user:
+        try:
+            cmp = Company.objects.get(user=request.user.id)
+            bc = request.POST['barcode']
+
+            if Items.objects.filter(cid = cmp, barcode = bc).exists():
+                item = Items.objects.get(cid = cmp, barcode = bc)
+                hsn = item.hsn
+                pur_rate = item.purchase_price
+                sale_rate = item.sale_price
+                tax = True if item.tax == "Taxable" else False
+                gst = item.gst
+                igst = item.igst
+                return JsonResponse({"status":True,'id':item.id, 'name':item.name,'hsn':hsn,'pur_rate':pur_rate,'sale_rate':sale_rate, 'tax':tax,'gst':gst,'igst':igst})
+            else:
+                return JsonResponse({"status":False, "message":"No data found.!"})
+        except Exception as e:
+            print(e)
+            return JsonResponse({"status":False, "message":"something went wrong..!"})
+    return redirect('/')

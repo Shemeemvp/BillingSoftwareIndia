@@ -45,6 +45,7 @@ class Items(models.Model):
     purchase_price = models.FloatField(null=True, blank= True)
     stock = models.IntegerField()
     date = models.DateField(auto_now_add=True, auto_now=False, null=True, blank= True)
+    barcode = models.CharField(max_length=100, null=True, blank=True)
 
 class Item_units(models.Model):
     cid = models.ForeignKey(Company, on_delete=models.CASCADE)
