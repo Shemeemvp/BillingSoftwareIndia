@@ -301,12 +301,12 @@ Item{%endblock %} {% block content %}
             <div class="row mt-3">
               <div class="col-md-6 col-lg-6">
                 <button
-                  class="barcode_btn mb-1"
+                  class="barcode_btn btn-sm mb-1"
                   type="button"
                   onclick="openBarcode()"
                   title="ADD BARCODE"
                 >
-                  <i class="fa fa-barcode"></i>
+                  ADD <i class="fa fa-barcode"></i>
                 </button>
                 <div
                   class="align-items-center"
@@ -319,7 +319,7 @@ Item{%endblock %} {% block content %}
                     id="barcode"
                     placeholder="Scan or enter barcode.."
                     class="form-control text-uppercase"
-                    oninput="checkBarcode(this.value)"
+                    oninput="checkBarcode(event)"
                     value=""
                   />
                   <i
@@ -429,26 +429,54 @@ Item{%endblock %} {% block content %}
     $("#barcode").prop("required", false);
   }
 
-  function checkBarcode(value){
-    var bc = value.toUpperCase()
-    if(bc != ""){
-        $.ajax({
-            type: "POST",
-            url: "{% url 'checkItemBarcode' %}",
-            data: {
-            barcode: bc,
-            csrfmiddlewaretoken: "{{ csrf_token }}",
-            },
+  function checkBarcode(event) {
+    var bc = event.target.value.toUpperCase();
+    if (event.keyCode == 13) {
+      event.preventDefault();
+    }
+    if (bc != "") {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'checkItemBarcode' %}",
+        data: {
+          barcode: bc,
+          csrfmiddlewaretoken: "{{ csrf_token }}",
+        },
 
-            success: function (response) {
-                if (!response.status) {
-                    alert(response.message);
-                    // $('#barcode').val("")
-                }
-            },
-        });
+        success: function (response) {
+          if (!response.status) {
+            alert(response.message);
+            // $('#barcode').val("")
+          }
+        },
+      });
     }
   }
+
+  $("#barcode").keydown(function (event) {
+    var id = event.keyCode;
+    if (id == 13) {
+      event.preventDefault();
+      var bc = event.target.value.toUpperCase();
+      if (bc != "") {
+        $.ajax({
+          type: "POST",
+          url: "{% url 'checkItemBarcode' %}",
+          data: {
+            barcode: bc,
+            csrfmiddlewaretoken: "{{ csrf_token }}",
+          },
+
+          success: function (response) {
+            if (!response.status) {
+              alert(response.message);
+              // $('#barcode').val("")
+            }
+          },
+        });
+      }
+    }
+  });
 
   $(document).ready(() => {
     var nav_links = $(".nav-item.nav-link");

@@ -260,6 +260,14 @@ Purchase{%endblock %} {% block content %}
                   title="Type barcode and press Enter key"
                   autocomplete="off"
                 />
+                <button
+                  class="btn btn-sm btn-outline-secondary ms-1"
+                  title="Check Barcode"
+                  onclick="checkItemBarcode()"
+                  type="button"
+                >
+                  <i class="fa fa-check"></i>
+                </button>
               </div>
             </div>
 
@@ -599,76 +607,80 @@ Purchase{%endblock %} {% block content %}
 
   $(document).ready(() => {
     focusBarcode();
-    $("#barcode").on("input", function () {
-      var bc = $(this).val();
-      if (bc != "") {
-        $.ajax({
-          type: "POST",
-          url: "{% url 'getBarcodeDetails' %}",
-          data: {
-            barcode: bc,
-            csrfmiddlewaretoken: "{{ csrf_token }}",
-          },
+    $("#barcode").on("keydown", function (event) {
+      if (event.keyCode == 13) {
+        event.preventDefault();
+        var bc = $(this).val();
+        if (bc != "") {
+          $.ajax({
+            type: "POST",
+            url: "{% url 'getBarcodeDetails' %}",
+            data: {
+              barcode: bc,
+              csrfmiddlewaretoken: "{{ csrf_token }}",
+            },
 
-          success: function (response) {
-            console.log("AJAX Success - Response Data:", response);
-            if (response.status) {
-              var roinc = $("#pur-items-table-body tr").length;
-              roinc++;
-              $("#pur-items-table-body").append(
-                `<tr id='addr${roinc}'>
-                    <td class="item_sl_num">${roinc}</td>
-                    <td>
-                        <div class="w-100">
-                            <div class="p-0 border-0 bg-none position-relative drop-box" style="display: block;">
-                                <input type="text" id="item${roinc}" value="" name="item[]" class="dropdown-toggle form-control item-display" onkeyup="filterFunction($(this).attr('id'))"  data-bs-toggle="dropdown" aria-expanded="false" placeholder="Items.." autocomplete="off">
-                                <ul class="dropdown-menu w-100 items-available position-absolute" id="menu${roinc}"  style="overflow-y: auto;height: fit-content;max-height: 40vh;">
-                                    {% for i in items %}
-                                    <li class="dropdown-item items-options" onclick="getItemDetails($(this).parent().prev().attr('id'),$(this).html())">{{i.name}}</li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <input type="number" name='hsn[]' id="hsn${roinc}" placeholder='HSN Code' class="form-control"/>
-                        <input type="text" name="pItems[]" id="pitem${roinc}" hidden>
-                    </td>
-                    <td><input type="number" name='qty[]'placeholder='Quantity' id="qty${roinc}" value="" class="form-control qty" min="1" required/></td>
-                    <td><input type="number" name='price[]' id="price${roinc}" placeholder='Unit Price' class="form-control price" step="0.00" min="0" /></td>
-                    <td>
-                        <input type="text" name="taxgst[]" class="form-control tax tax-gst" placeholder="0 %" id="taxgst${roinc}" style="display: block;" readonly>
-                        <input type="text" name="taxigst[]" class="form-control tax tax-igst" placeholder="0 %" id="taxigst${roinc}" style="display: none;" readonly>
-                    </td>
-                    <td><input type="number" name='total[]' id="total${roinc}" class="form-control total" value="0" step="any" readonly /></td>
-                    <td style="display: none;"><input type="hidden" step="any" id="taxamount${roinc}" class="form-control taxamount"/></td>
-                    <td>
-                        <button type="button" id="${roinc}" class="btn clone_row btn-outline-secondary mb-1 w-100" title="Clone Row">+</button><br>
-                        <button type="button" id="${roinc}" class="btn remove_row btn-outline-secondary w-100" title="Remove Row">-</button>
-                    </td>
-                </tr>`
-              );
+            success: function (response) {
+              console.log("AJAX Success - Response Data:", response);
+              if (response.status) {
+                var roinc = $("#pur-items-table-body tr").length;
+                roinc++;
+                $("#pur-items-table-body").append(
+                  `<tr id='addr${roinc}'>
+                      <td class="item_sl_num">${roinc}</td>
+                      <td>
+                          <div class="w-100">
+                              <div class="p-0 border-0 bg-none position-relative drop-box" style="display: block;">
+                                  <input type="text" id="item${roinc}" value="" name="item[]" class="dropdown-toggle form-control item-display" onkeyup="filterFunction($(this).attr('id'))"  data-bs-toggle="dropdown" aria-expanded="false" placeholder="Items.." autocomplete="off">
+                                  <ul class="dropdown-menu w-100 items-available position-absolute" id="menu${roinc}"  style="overflow-y: auto;height: fit-content;max-height: 40vh;">
+                                      {% for i in items %}
+                                      <li class="dropdown-item items-options" onclick="getItemDetails($(this).parent().prev().attr('id'),$(this).html())">{{i.name}}</li>
+                                      {% endfor %}
+                                  </ul>
+                              </div>
+                          </div>
+                      </td>
+                      <td>
+                          <input type="number" name='hsn[]' id="hsn${roinc}" placeholder='HSN Code' class="form-control"/>
+                          <input type="text" name="pItems[]" id="pitem${roinc}" hidden>
+                      </td>
+                      <td><input type="number" name='qty[]'placeholder='Quantity' id="qty${roinc}" value="" class="form-control qty" min="1" required/></td>
+                      <td><input type="number" name='price[]' id="price${roinc}" placeholder='Unit Price' class="form-control price" step="0.00" min="0" /></td>
+                      <td>
+                          <input type="text" name="taxgst[]" class="form-control tax tax-gst" placeholder="0 %" id="taxgst${roinc}" style="display: block;" readonly>
+                          <input type="text" name="taxigst[]" class="form-control tax tax-igst" placeholder="0 %" id="taxigst${roinc}" style="display: none;" readonly>
+                      </td>
+                      <td><input type="number" name='total[]' id="total${roinc}" class="form-control total" value="0" step="any" readonly /></td>
+                      <td style="display: none;"><input type="hidden" step="any" id="taxamount${roinc}" class="form-control taxamount"/></td>
+                      <td>
+                          <button type="button" id="${roinc}" class="btn clone_row btn-outline-secondary mb-1 w-100" title="Clone Row">+</button><br>
+                          <button type="button" id="${roinc}" class="btn remove_row btn-outline-secondary w-100" title="Remove Row">-</button>
+                      </td>
+                  </tr>`
+                );
 
-              document.getElementById("item" + roinc).value = response.name;
-              document.getElementById("hsn" + roinc).value = response.hsn;
-              document.getElementById("price" + roinc).value =
-                response.pur_rate;
-              // document.getElementById('tax'+roinc).value = response.tax;
-              document.getElementById("taxgst" + roinc).value = response.gst;
-              document.getElementById("taxigst" + roinc).value = response.igst;
-              document.getElementById("pitem" + roinc).value = response.id;
+                document.getElementById("item" + roinc).value = response.name;
+                document.getElementById("hsn" + roinc).value = response.hsn;
+                document.getElementById("price" + roinc).value =
+                  response.pur_rate;
+                // document.getElementById('tax'+roinc).value = response.tax;
+                document.getElementById("taxgst" + roinc).value = response.gst;
+                document.getElementById("taxigst" + roinc).value =
+                  response.igst;
+                document.getElementById("pitem" + roinc).value = response.id;
 
-              $("#barcode").val("");
-              refreshTax();
-              calc();
-              focusBarcode();
-            } else {
-              alert(response.message);
-              $("#barcode").val("");
-              focusBarcode();
-            }
-          },
-        });
+                $("#barcode").val("");
+                refreshTax();
+                calc();
+                focusBarcode();
+              } else {
+                alert(response.message);
+                $("#barcode").val("");
+                focusBarcode();
+              }
+            },
+          });
+        }
       }
     });
   });
@@ -752,6 +764,78 @@ Purchase{%endblock %} {% block content %}
 
   function focusBarcode() {
     $("#barcode").focus();
+  }
+
+  function checkItemBarcode() {
+    var bc = $("#barcode2").val();
+    if (bc != "") {
+      $.ajax({
+        type: "POST",
+        url: "{% url 'getBarcodeDetails' %}",
+        data: {
+          barcode: bc,
+          csrfmiddlewaretoken: "{{ csrf_token }}",
+        },
+
+        success: function (response) {
+          console.log("AJAX Success - Response Data:", response);
+          if (response.status) {
+            var roinc = $("#pur-items-table-body tr").length;
+            roinc++;
+            $("#pur-items-table-body").append(
+              `<tr id='addr${roinc}'>
+                    <td class="item_sl_num">${roinc}</td>
+                    <td>
+                        <div class="w-100">
+                            <div class="p-0 border-0 bg-none position-relative drop-box" style="display: block;">
+                                <input type="text" id="item${roinc}" value="" name="item[]" class="dropdown-toggle form-control item-display" onkeyup="filterFunction($(this).attr('id'))"  data-bs-toggle="dropdown" aria-expanded="false" placeholder="Items.." autocomplete="off">
+                                <ul class="dropdown-menu w-100 items-available position-absolute" id="menu${roinc}"  style="overflow-y: auto;height: fit-content;max-height: 40vh;">
+                                    {% for i in items %}
+                                    <li class="dropdown-item items-options" onclick="getItemDetails($(this).parent().prev().attr('id'),$(this).html())">{{i.name}}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="number" name='hsn[]' id="hsn${roinc}" placeholder='HSN Code' class="form-control"/>
+                        <input type="text" name="pItems[]" id="pitem${roinc}" hidden>
+                    </td>
+                    <td><input type="number" name='qty[]'placeholder='Quantity' id="qty${roinc}" value="" class="form-control qty" min="1" required/></td>
+                    <td><input type="number" name='price[]' id="price${roinc}" placeholder='Unit Price' class="form-control price" step="0.00" min="0" /></td>
+                    <td>
+                        <input type="text" name="taxgst[]" class="form-control tax tax-gst" placeholder="0 %" id="taxgst${roinc}" style="display: block;" readonly>
+                        <input type="text" name="taxigst[]" class="form-control tax tax-igst" placeholder="0 %" id="taxigst${roinc}" style="display: none;" readonly>
+                    </td>
+                    <td><input type="number" name='total[]' id="total${roinc}" class="form-control total" value="0" step="any" readonly /></td>
+                    <td style="display: none;"><input type="hidden" step="any" id="taxamount${roinc}" class="form-control taxamount"/></td>
+                    <td>
+                        <button type="button" id="${roinc}" class="btn clone_row btn-outline-secondary mb-1 w-100" title="Clone Row">+</button><br>
+                        <button type="button" id="${roinc}" class="btn remove_row btn-outline-secondary w-100" title="Remove Row">-</button>
+                    </td>
+                </tr>`
+            );
+
+            document.getElementById("item" + roinc).value = response.name;
+            document.getElementById("hsn" + roinc).value = response.hsn;
+            document.getElementById("price" + roinc).value = response.pur_rate;
+            // document.getElementById('tax'+roinc).value = response.tax;
+            document.getElementById("taxgst" + roinc).value = response.gst;
+            document.getElementById("taxigst" + roinc).value = response.igst;
+            document.getElementById("pitem" + roinc).value = response.id;
+
+            $("#barcode2").val("");
+            refreshTax();
+            calc();
+            focusBarcode();
+          } else {
+            alert(response.message);
+            $("#barcode2").val("");
+            focusBarcode();
+          }
+        },
+      });
+    }
   }
 
   function filterFunction(id) {
